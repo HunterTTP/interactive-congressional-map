@@ -214,6 +214,9 @@
       };
       const MAP_BACKGROUND_FILL = "#f8fafc";
       const MAP_OVERLAY_COLOR = "#cbd5e1";
+      const MAP_MIN_ZOOM = 0.8;
+      const LARGE_SCREEN_MIN_WIDTH = 1200;
+      const MAP_DEFAULT_PAN_X = -30;
 
       const app = {
         data: null,
@@ -311,8 +314,9 @@
           if (!app.panZoom) {
             return;
           }
-          app.panZoom.resetZoom();
-          app.panZoom.center();
+          requestAnimationFrame(() => {
+            applyDefaultMapView();
+          });
         });
 
         els.backToMap.addEventListener("click", showMapView);
@@ -613,10 +617,26 @@
             fit: true,
             center: true,
             mouseWheelZoomEnabled: true,
-            minZoom: 1,
+            minZoom: MAP_MIN_ZOOM,
             maxZoom: 11,
           });
+          requestAnimationFrame(() => {
+            applyDefaultMapView();
+          });
         }
+      }
+
+      function applyDefaultMapView() {
+        if (!app.panZoom) {
+          return;
+        }
+        app.panZoom.resize();
+        app.panZoom.fit();
+        if (window.matchMedia(`(min-width: ${LARGE_SCREEN_MIN_WIDTH}px)`).matches) {
+          app.panZoom.zoom(MAP_MIN_ZOOM);
+        }
+        app.panZoom.center();
+        app.panZoom.panBy({ x: MAP_DEFAULT_PAN_X, y: 0 });
       }
 
       function setOverlay(overlayKey, enabled) {
