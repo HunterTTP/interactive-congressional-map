@@ -9,6 +9,7 @@
     <style>
       #map-frame {
         touch-action: none;
+        overscroll-behavior: contain;
       }
 
       #map-frame svg {
@@ -750,20 +751,22 @@
           "touchstart",
           (event) => {
             if (event.touches.length >= 2) {
+              event.preventDefault();
               app.suppressMapClickUntil = Date.now() + PINCH_CLICK_SUPPRESS_MS;
               clearHoverState();
             }
           },
-          { passive: true }
+          { passive: false }
         );
         els.mapFrame.addEventListener(
           "touchmove",
           (event) => {
             if (event.touches.length >= 2) {
+              event.preventDefault();
               app.suppressMapClickUntil = Date.now() + PINCH_CLICK_SUPPRESS_MS;
             }
           },
-          { passive: true }
+          { passive: false }
         );
         els.mapFrame.addEventListener(
           "touchend",
