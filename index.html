@@ -7,9 +7,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
     <style>
+      #map-frame {
+        touch-action: none;
+      }
+
       #map-frame svg {
         width: 100%;
         height: 100%;
+        touch-action: none;
       }
 
       .district-shape {
@@ -232,6 +237,10 @@
       const MAP_MIN_ZOOM = 0.8;
       const LARGE_SCREEN_MIN_WIDTH = 1200;
       const MAP_DEFAULT_PAN_X = -30;
+      const PINCH_CLICK_SUPPRESS_MS = 250;
+      const PINCH_ZOOM_EPSILON = 0.005;
+      const TAP_MAX_MOVEMENT_PX = 10;
+      const TAP_MAX_DURATION_MS = 500;
 
       const app = {
         data: null,
@@ -250,6 +259,13 @@
           districtNumbers: null,
           countyLines: null,
           countyNames: null,
+        },
+        suppressMapClickUntil: 0,
+        touchPinch: {
+          active: false,
+          lastDistance: 0,
+          lastCenterX: 0,
+          lastCenterY: 0,
         },
       };
 
@@ -344,6 +360,8 @@
         els.toggleCountyNames.addEventListener("change", (event) => {
           setOverlay("countyNames", event.target.checked);
         });
+
+        wireTouchPinchZoom();
       }
 
       function syncLegendColors() {
@@ -592,6 +610,7 @@
 
         districtGroup.querySelectorAll("path").forEach((path) => {
           const districtNumber = Number(path.getAttribute("data-district"));
+          let tapTouchState = null;
           app.districtPaths.set(districtNumber, path);
 
           path.addEventListener("mouseenter", (event) => {
@@ -613,7 +632,87 @@
           });
 
           path.addEventListener("click", () => {
+            if (Date.now() < app.suppressMapClickUntil) {
+              return;
+            }
             openDistrictCard(districtNumber);
+          });
+
+          path.addEventListener(
+            "touchstart",
+            (event) => {
+              if (event.touches.length !== 1 || Date.now() < app.suppressMapClickUntil || app.touchPinch.active) {
+                tapTouchState = null;
+                return;
+              }
+              const touch = event.touches[0];
+              tapTouchState = {
+                id: touch.identifier,
+                startX: touch.clientX,
+                startY: touch.clientY,
+                startAt: Date.now(),
+                moved: false,
+              };
+            },
+            { passive: true }
+          );
+
+          path.addEventListener(
+            "touchmove",
+            (event) => {
+              if (!tapTouchState || event.touches.length !== 1) {
+                tapTouchState = null;
+                return;
+              }
+              const touch = event.touches[0];
+              const dx = touch.clientX - tapTouchState.startX;
+              const dy = touch.clientY - tapTouchState.startY;
+              if (Math.hypot(dx, dy) > TAP_MAX_MOVEMENT_PX) {
+                tapTouchState.moved = true;
+              }
+            },
+            { passive: true }
+          );
+
+          path.addEventListener(
+            "touchend",
+            (event) => {
+              if (!tapTouchState) {
+                return;
+              }
+              const endingTouch = Array.from(event.changedTouches).find(
+                (touch) => touch.identifier === tapTouchState.id
+              );
+              if (!endingTouch) {
+                tapTouchState = null;
+                return;
+              }
+
+              const dx = endingTouch.clientX - tapTouchState.startX;
+              const dy = endingTouch.clientY - tapTouchState.startY;
+              const duration = Date.now() - tapTouchState.startAt;
+              const isTap =
+                !tapTouchState.moved &&
+                Math.hypot(dx, dy) <= TAP_MAX_MOVEMENT_PX &&
+                duration <= TAP_MAX_DURATION_MS &&
+                Date.now() >= app.suppressMapClickUntil &&
+                !app.touchPinch.active;
+
+              tapTouchState = null;
+
+              if (!isTap) {
+                return;
+              }
+
+              app.suppressMapClickUntil = Date.now() + PINCH_CLICK_SUPPRESS_MS;
+              event.preventDefault();
+              openDistrictCard(districtNumber);
+            },
+            { passive: false }
+          );
+
+          path.addEventListener("touchcancel", () => {
+            tapTouchState = null;
           });
 
           path.addEventListener("keydown", (event) => {
@@ -652,6 +751,119 @@
         }
         app.panZoom.center();
         app.panZoom.panBy({ x: MAP_DEFAULT_PAN_X, y: 0 });
+      }
+
+      function wireTouchPinchZoom() {
+        els.mapFrame.addEventListener("touchstart", handleMapTouchStart, { passive: false });
+        els.mapFrame.addEventListener("touchmove", handleMapTouchMove, { passive: false });
+        els.mapFrame.addEventListener("touchend", handleMapTouchEnd, { passive: false });
+        els.mapFrame.addEventListener("touchcancel", handleMapTouchEnd, { passive: false });
+      }
+
+      function handleMapTouchStart(event) {
+        if (event.touches.length !== 2 || !app.panZoom) {
+          return;
+        }
+        beginPinchGesture(event.touches);
+        event.preventDefault();
+      }
+
+      function handleMapTouchMove(event) {
+        if (!app.panZoom) {
+          return;
+        }
+
+        if (event.touches.length !== 2) {
+          if (app.touchPinch.active) {
+            endPinchGesture();
+          }
+          return;
+        }
+
+        const pinch = getPinchMetrics(event.touches);
+        if (!pinch) {
+          return;
+        }
+
+        if (!app.touchPinch.active) {
+          beginPinchGesture(event.touches);
+          event.preventDefault();
+          return;
+        }
+
+        const zoomScale = pinch.distance / app.touchPinch.lastDistance;
+        if (Number.isFinite(zoomScale) && zoomScale > 0 && Math.abs(zoomScale - 1) > PINCH_ZOOM_EPSILON) {
+          app.panZoom.zoomAtPointBy(zoomScale, pinch.point);
+        }
+
+        const deltaX = pinch.point.x - app.touchPinch.lastCenterX;
+        const deltaY = pinch.point.y - app.touchPinch.lastCenterY;
+        if (Number.isFinite(deltaX) && Number.isFinite(deltaY) && (Math.abs(deltaX) > 0 || Math.abs(deltaY) > 0)) {
+          app.panZoom.panBy({ x: deltaX, y: deltaY });
+        }
+
+        app.touchPinch.lastDistance = pinch.distance;
+        app.touchPinch.lastCenterX = pinch.point.x;
+        app.touchPinch.lastCenterY = pinch.point.y;
+        app.suppressMapClickUntil = Date.now() + PINCH_CLICK_SUPPRESS_MS;
+        event.preventDefault();
+      }
+
+      function handleMapTouchEnd(event) {
+        if (event.touches.length < 2) {
+          endPinchGesture();
+          return;
+        }
+
+        const pinch = getPinchMetrics(event.touches);
+        if (!pinch) {
+          return;
+        }
+        app.touchPinch.lastDistance = pinch.distance;
+        app.touchPinch.lastCenterX = pinch.point.x;
+        app.touchPinch.lastCenterY = pinch.point.y;
+      }
+
+      function beginPinchGesture(touches) {
+        const pinch = getPinchMetrics(touches);
+        if (!pinch) {
+          return;
+        }
+        app.touchPinch.active = true;
+        app.touchPinch.lastDistance = pinch.distance;
+        app.touchPinch.lastCenterX = pinch.point.x;
+        app.touchPinch.lastCenterY = pinch.point.y;
+        app.suppressMapClickUntil = Date.now() + PINCH_CLICK_SUPPRESS_MS;
+        clearHoverState();
+      }
+
+      function endPinchGesture() {
+        app.touchPinch.active = false;
+        app.touchPinch.lastDistance = 0;
+      }
+
+      function getPinchMetrics(touches) {
+        if (!touches || touches.length < 2) {
+          return null;
+        }
+        const first = touches[0];
+        const second = touches[1];
+        const centerClientX = (first.clientX + second.clientX) / 2;
+        const centerClientY = (first.clientY + second.clientY) / 2;
+        const dx = first.clientX - second.clientX;
+        const dy = first.clientY - second.clientY;
+        const distance = Math.hypot(dx, dy);
+        if (!Number.isFinite(distance) || distance <= 0) {
+          return null;
+        }
+        const frameRect = els.mapFrame.getBoundingClientRect();
+        return {
+          distance,
+          point: {
+            x: centerClientX - frameRect.left,
+            y: centerClientY - frameRect.top,
+          },
+        };
       }
 
       function setOverlay(overlayKey, enabled) {
