@@ -112,13 +112,13 @@
 
             <div class="mt-3 flex flex-wrap items-center gap-3 text-xs text-slate-500">
               <span class="inline-flex items-center gap-1">
-                <span class="h-2.5 w-2.5 rounded-full" style="background-color: #1d4ed8;"></span>D-held
+                <span id="legend-dot-d" class="h-2.5 w-2.5 rounded-full"></span>D-held
               </span>
               <span class="inline-flex items-center gap-1">
-                <span class="h-2.5 w-2.5 rounded-full" style="background-color: #b91c1c;"></span>R-held
+                <span id="legend-dot-r" class="h-2.5 w-2.5 rounded-full"></span>R-held
               </span>
               <span class="inline-flex items-center gap-1">
-                <span class="h-2.5 w-2.5 rounded-full" style="background-color: #b45309;"></span>Other/Unknown
+                <span id="legend-dot-other" class="h-2.5 w-2.5 rounded-full"></span>Other/Unknown
               </span>
               <span>District borders are black.</span>
             </div>
@@ -150,15 +150,11 @@
 
     <script>
       const DISTRICT_FILL_DARK_BY_PARTY = {
-        D: "#1d4ed8",
-        R: "#b91c1c",
+        D: "#1f5fbd",
+        R: "#c43333",
         OTHER: "#b45309",
       };
-      const DISTRICT_FILL_LIGHT_BY_PARTY = {
-        D: "#60a5fa",
-        R: "#f87171",
-        OTHER: "#fbbf24",
-      };
+      const MAP_BACKGROUND_FILL = "#f8fafc";
 
       const app = {
         data: null,
@@ -185,12 +181,16 @@
         selectedIncumbentCard: document.getElementById("selected-incumbent-card"),
         selectedIncumbent: document.getElementById("selected-incumbent"),
         candidateLists: document.getElementById("candidate-lists"),
+        legendDotD: document.getElementById("legend-dot-d"),
+        legendDotR: document.getElementById("legend-dot-r"),
+        legendDotOther: document.getElementById("legend-dot-other"),
       };
 
       init();
 
       async function init() {
         wireStaticControls();
+        syncLegendColors();
         showMapMessage("Loading map...");
 
         try {
@@ -231,6 +231,12 @@
         });
 
         els.backToMap.addEventListener("click", showMapView);
+      }
+
+      function syncLegendColors() {
+        els.legendDotD.style.backgroundColor = DISTRICT_FILL_DARK_BY_PARTY.D;
+        els.legendDotR.style.backgroundColor = DISTRICT_FILL_DARK_BY_PARTY.R;
+        els.legendDotOther.style.backgroundColor = DISTRICT_FILL_DARK_BY_PARTY.OTHER;
       }
 
       async function loadJson(path) {
@@ -295,7 +301,7 @@
         background.setAttribute("y", String(Number.isFinite(y) ? y : 0));
         background.setAttribute("width", String(Number.isFinite(w) ? w : 800));
         background.setAttribute("height", String(Number.isFinite(h) ? h : 651));
-        background.setAttribute("fill", "#f8fafc");
+        background.setAttribute("fill", MAP_BACKGROUND_FILL);
         svg.appendChild(background);
 
         const outlineSource = sourceSvg.querySelector("g#layer2 > path");
@@ -439,6 +445,7 @@
 
           const visible = matchesFilter(district);
           path.setAttribute("fill", visible ? getDistrictColor(district) : getFilteredOutColor());
+          path.setAttribute("fill-opacity", "1");
           path.style.opacity = "1";
           path.style.pointerEvents = visible ? "auto" : "none";
           if (district.district !== app.hoveredDistrict) path.classList.remove("is-hovered");
@@ -614,13 +621,7 @@
       }
 
       function getFilteredOutColor() {
-        if (app.filter === "D") {
-          return DISTRICT_FILL_LIGHT_BY_PARTY.R;
-        }
-        if (app.filter === "R") {
-          return DISTRICT_FILL_LIGHT_BY_PARTY.D;
-        }
-        return "#e2e8f0";
+        return MAP_BACKGROUND_FILL;
       }
 
       function matchesFilter(district) {
