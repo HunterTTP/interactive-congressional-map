@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Florida Congressional District Candidate Map</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
     <style>
       #map-frame {
         touch-action: none;
@@ -21,12 +21,18 @@
       .district-shape {
         cursor: pointer;
         transition: opacity 120ms ease, stroke-width 120ms ease, filter 120ms ease;
+        -webkit-tap-highlight-color: transparent;
       }
 
       .district-shape.is-hovered {
         stroke: #0f172a;
         stroke-width: 2.3;
         filter: brightness(1.04);
+      }
+
+      .district-shape:focus,
+      .district-shape:focus-visible {
+        outline: none;
       }
 
       .filter-chip.active {
@@ -236,11 +242,14 @@
       const MAP_BACKGROUND_FILL = "#f8fafc";
       const MAP_OVERLAY_COLOR = "#cbd5e1";
       const MAP_MIN_ZOOM = 0.8;
+      const MAP_MAX_ZOOM = 11;
       const LARGE_SCREEN_MIN_WIDTH = 1200;
       const MAP_DEFAULT_PAN_X = -30;
-      const PINCH_CLICK_SUPPRESS_MS = 250;
+      const MAP_GESTURE_CLICK_SUPPRESS_MS = 250;
       const TAP_MAX_MOVEMENT_PX = 10;
-      const TAP_MAX_DURATION_MS = 500;
+      const TAP_MAX_DURATION_MS = 450;
+      const ZOOM_EPSILON = 0.001;
+      const PAN_EPSILON = 0.5;
 
       const app = {
         data: null,
@@ -248,7 +257,14 @@
         selectedDistrict: null,
         hoveredDistrict: null,
         filter: "all",
-        panZoom: null,
+        mapInteraction: {
+          zoomBehavior: null,
+          zoomSelection: null,
+          zoomLayer: null,
+          currentTransform: null,
+          gestureDidTransform: false,
+          activeTapByPointerId: new Map(),
+        },
         districtPaths: new Map(),
         overlays: {
           districtNumbers: true,
@@ -306,7 +322,7 @@
           renderHeaderStats();
 
           const mapParts = buildInteractiveMap(svgText);
-          mountMap(mapParts.svg, mapParts.districtGroup, mapParts.overlayLayers);
+          mountMap(mapParts.svg, mapParts.zoomLayer, mapParts.districtGroup, mapParts.overlayLayers);
 
           setFilter("all");
           renderSelectedDistrict();
@@ -336,9 +352,6 @@
         els.resetView.addEventListener("click", () => {
           setFilter("all");
           showMapView();
-          if (!app.panZoom) {
-            return;
-          }
           requestAnimationFrame(() => {
             applyDefaultMapView();
           });
@@ -354,8 +367,6 @@
         els.toggleCountyNames.addEventListener("change", (event) => {
           setOverlay("countyNames", event.target.checked);
         });
-
-        wireTouchInteractionGuards();
       }
 
       function syncLegendColors() {
@@ -434,6 +445,8 @@
         svg.setAttribute("role", "img");
         const defs = document.createElementNS(ns, "defs");
         let countyLinesClipId = null;
+        const zoomLayer = document.createElementNS(ns, "g");
+        zoomLayer.setAttribute("id", "zoom-layer");
 
         const background = document.createElementNS(ns, "rect");
         background.setAttribute("x", String(Number.isFinite(x) ? x : 0));
@@ -441,7 +454,7 @@
         background.setAttribute("width", String(Number.isFinite(w) ? w : 800));
         background.setAttribute("height", String(Number.isFinite(h) ? h : 651));
         background.setAttribute("fill", MAP_BACKGROUND_FILL);
-        svg.appendChild(background);
+        zoomLayer.appendChild(background);
 
         const outlineSource = sourceSvg.querySelector("g#layer2 > path");
         if (outlineSource) {
@@ -451,7 +464,7 @@
           outline.setAttribute("stroke-width", "1.2");
           outline.setAttribute("vector-effect", "non-scaling-stroke");
           outline.setAttribute("pointer-events", "none");
-          svg.appendChild(outline);
+          zoomLayer.appendChild(outline);
 
           countyLinesClipId = "state-boundary-clip";
           const countyLinesClip = document.createElementNS(ns, "clipPath");
@@ -469,6 +482,7 @@
         if (defs.childElementCount > 0) {
           svg.appendChild(defs);
         }
+        svg.appendChild(zoomLayer);
 
         const districtGroup = sourceDistrictGroup.cloneNode(true);
         districtGroup.setAttribute("id", "district-layer");
@@ -490,7 +504,7 @@
           path.classList.add("district-shape");
         });
 
-        svg.appendChild(districtGroup);
+        zoomLayer.appendChild(districtGroup);
         const countyLinesLayer = document.createElementNS(ns, "g");
         countyLinesLayer.setAttribute("id", "county-lines-layer");
         countyLinesLayer.setAttribute("pointer-events", "none");
@@ -569,22 +583,23 @@
 
         countyLinesLayer.style.display = "none";
         if (countyLinesLayer.childElementCount > 0) {
-          svg.appendChild(countyLinesLayer);
+          zoomLayer.appendChild(countyLinesLayer);
         }
         if (districtBordersLayer.childElementCount > 0) {
-          svg.appendChild(districtBordersLayer);
+          zoomLayer.appendChild(districtBordersLayer);
         }
         if (countyNamesLayer) {
           countyNamesLayer.style.display = "none";
-          svg.appendChild(countyNamesLayer);
+          zoomLayer.appendChild(countyNamesLayer);
         }
         if (districtNumbersLayer) {
           districtNumbersLayer.style.display = "none";
-          svg.appendChild(districtNumbersLayer);
+          zoomLayer.appendChild(districtNumbersLayer);
         }
 
         return {
           svg,
+          zoomLayer,
           districtGroup,
           overlayLayers: {
             districtNumbers: districtNumbersLayer,
@@ -594,118 +609,90 @@
         };
       }
 
-      function mountMap(svg, districtGroup, overlayLayers) {
+      function mountMap(svg, zoomLayer, districtGroup, overlayLayers) {
         els.mapViewport.innerHTML = "";
         els.mapViewport.appendChild(svg);
         app.mapSvg = svg;
         app.districtPaths.clear();
         app.overlayLayers = overlayLayers;
         applyOverlayVisibility();
+        wireMapPanZoom(svg, zoomLayer);
 
         districtGroup.querySelectorAll("path").forEach((path) => {
           const districtNumber = Number(path.getAttribute("data-district"));
-          let tapTouchState = null;
+          if (!districtNumber) {
+            return;
+          }
+
           app.districtPaths.set(districtNumber, path);
 
-          path.addEventListener("mouseenter", (event) => {
+          path.addEventListener("pointerenter", (event) => {
+            if (event.pointerType !== "mouse" || isMapClickSuppressed()) {
+              return;
+            }
             app.hoveredDistrict = districtNumber;
             path.classList.add("is-hovered");
             showTooltip(districtNumber, event);
           });
 
-          path.addEventListener("mousemove", (event) => {
-            if (app.hoveredDistrict === districtNumber) {
+          path.addEventListener("pointermove", (event) => {
+            updateTapMovement(event);
+            if (event.pointerType === "mouse" && app.hoveredDistrict === districtNumber) {
               moveTooltip(event);
             }
           });
 
-          path.addEventListener("mouseleave", () => {
-            app.hoveredDistrict = null;
-            path.classList.remove("is-hovered");
-            hideTooltip();
-          });
-
-          path.addEventListener("click", () => {
-            if (Date.now() < app.suppressMapClickUntil) {
+          path.addEventListener("pointerleave", (event) => {
+            clearTapCandidate(event.pointerId);
+            if (event.pointerType !== "mouse") {
               return;
             }
+            if (app.hoveredDistrict === districtNumber) {
+              app.hoveredDistrict = null;
+              hideTooltip();
+            }
+            path.classList.remove("is-hovered");
+          });
+
+          path.addEventListener("pointerdown", (event) => {
+            if (event.button !== 0) {
+              return;
+            }
+            app.mapInteraction.activeTapByPointerId.set(event.pointerId, {
+              districtNumber,
+              startX: event.clientX,
+              startY: event.clientY,
+              startAt: Date.now(),
+              moved: false,
+            });
+          });
+
+          path.addEventListener("pointerup", (event) => {
+            const tapCandidate = app.mapInteraction.activeTapByPointerId.get(event.pointerId);
+            clearTapCandidate(event.pointerId);
+            if (!tapCandidate || tapCandidate.districtNumber !== districtNumber || event.button !== 0) {
+              return;
+            }
+
+            const dx = event.clientX - tapCandidate.startX;
+            const dy = event.clientY - tapCandidate.startY;
+            const duration = Date.now() - tapCandidate.startAt;
+            const isTap =
+              !tapCandidate.moved &&
+              Math.hypot(dx, dy) <= TAP_MAX_MOVEMENT_PX &&
+              duration <= TAP_MAX_DURATION_MS &&
+              !isMapClickSuppressed();
+
+            if (!isTap) {
+              return;
+            }
+
+            event.preventDefault();
             openDistrictCard(districtNumber);
           });
 
-          path.addEventListener(
-            "touchstart",
-            (event) => {
-              if (event.touches.length !== 1 || Date.now() < app.suppressMapClickUntil) {
-                tapTouchState = null;
-                return;
-              }
-              const touch = event.touches[0];
-              tapTouchState = {
-                id: touch.identifier,
-                startX: touch.clientX,
-                startY: touch.clientY,
-                startAt: Date.now(),
-                moved: false,
-              };
-            },
-            { passive: true }
-          );
-
-          path.addEventListener(
-            "touchmove",
-            (event) => {
-              if (!tapTouchState || event.touches.length !== 1) {
-                tapTouchState = null;
-                return;
-              }
-              const touch = event.touches[0];
-              const dx = touch.clientX - tapTouchState.startX;
-              const dy = touch.clientY - tapTouchState.startY;
-              if (Math.hypot(dx, dy) > TAP_MAX_MOVEMENT_PX) {
-                tapTouchState.moved = true;
-              }
-            },
-            { passive: true }
-          );
-
-          path.addEventListener(
-            "touchend",
-            (event) => {
-              if (!tapTouchState) {
-                return;
-              }
-              const endingTouch = Array.from(event.changedTouches).find(
-                (touch) => touch.identifier === tapTouchState.id
-              );
-              if (!endingTouch) {
-                tapTouchState = null;
-                return;
-              }
-
-              const dx = endingTouch.clientX - tapTouchState.startX;
-              const dy = endingTouch.clientY - tapTouchState.startY;
-              const duration = Date.now() - tapTouchState.startAt;
-              const isTap =
-                !tapTouchState.moved &&
-                Math.hypot(dx, dy) <= TAP_MAX_MOVEMENT_PX &&
-                duration <= TAP_MAX_DURATION_MS &&
-                Date.now() >= app.suppressMapClickUntil;
-
-              tapTouchState = null;
-
-              if (!isTap) {
-                return;
-              }
-
-              app.suppressMapClickUntil = Date.now() + PINCH_CLICK_SUPPRESS_MS;
-              event.preventDefault();
-              openDistrictCard(districtNumber);
-            },
-            { passive: false }
-          );
-
-          path.addEventListener("touchcancel", () => {
-            tapTouchState = null;
+          path.addEventListener("pointercancel", (event) => {
+            clearTapCandidate(event.pointerId);
           });
 
           path.addEventListener("keydown", (event) => {
@@ -716,72 +703,101 @@
           });
         });
 
-        if (typeof svgPanZoom === "function") {
-          app.panZoom = svgPanZoom(svg, {
-            zoomEnabled: true,
-            controlIconsEnabled: false,
-            panEnabled: true,
-            fit: true,
-            center: true,
-            mouseWheelZoomEnabled: true,
-            minZoom: MAP_MIN_ZOOM,
-            maxZoom: 11,
-          });
-          requestAnimationFrame(() => {
-            applyDefaultMapView();
-          });
+        requestAnimationFrame(() => {
+          applyDefaultMapView();
+        });
+      }
+
+      function wireMapPanZoom(svg, zoomLayer) {
+        if (!window.d3 || typeof d3.zoom !== "function" || typeof d3.select !== "function") {
+          return;
         }
+
+        const zoomBehavior = d3
+          .zoom()
+          .filter((event) => {
+            if (event.type === "dblclick") {
+              return false;
+            }
+            if (event.type === "mousedown") {
+              return event.button === 0;
+            }
+            return true;
+          })
+          .scaleExtent([MAP_MIN_ZOOM, MAP_MAX_ZOOM])
+          .on("start", () => {
+            app.mapInteraction.gestureDidTransform = false;
+            clearHoverState();
+          })
+          .on("zoom", (event) => {
+            const previousTransform = app.mapInteraction.currentTransform || d3.zoomIdentity;
+            const nextTransform = event.transform;
+            app.mapInteraction.currentTransform = nextTransform;
+            zoomLayer.setAttribute("transform", nextTransform.toString());
+
+            if (didZoomTransformChange(previousTransform, nextTransform)) {
+              app.mapInteraction.gestureDidTransform = true;
+              app.suppressMapClickUntil = Date.now() + MAP_GESTURE_CLICK_SUPPRESS_MS;
+            }
+          })
+          .on("end", () => {
+            if (app.mapInteraction.gestureDidTransform) {
+              app.suppressMapClickUntil = Date.now() + MAP_GESTURE_CLICK_SUPPRESS_MS;
+            }
+            app.mapInteraction.gestureDidTransform = false;
+          });
+
+        const zoomSelection = d3.select(svg);
+        zoomSelection.call(zoomBehavior);
+        zoomSelection.on("dblclick.zoom", null);
+
+        app.mapInteraction.zoomBehavior = zoomBehavior;
+        app.mapInteraction.zoomSelection = zoomSelection;
+        app.mapInteraction.zoomLayer = zoomLayer;
+        app.mapInteraction.currentTransform = d3.zoomTransform(svg);
       }
 
       function applyDefaultMapView() {
-        if (!app.panZoom) {
+        const { zoomBehavior, zoomSelection } = app.mapInteraction;
+        if (!window.d3 || !zoomBehavior || !zoomSelection) {
           return;
         }
-        app.panZoom.resize();
-        app.panZoom.fit();
-        if (window.matchMedia(`(min-width: ${LARGE_SCREEN_MIN_WIDTH}px)`).matches) {
-          app.panZoom.zoom(MAP_MIN_ZOOM);
-        }
-        app.panZoom.center();
-        app.panZoom.panBy({ x: MAP_DEFAULT_PAN_X, y: 0 });
+
+        clearHoverState();
+        const defaultScale = window.matchMedia(`(min-width: ${LARGE_SCREEN_MIN_WIDTH}px)`).matches ? MAP_MIN_ZOOM : 1;
+        const targetTransform = d3.zoomIdentity.translate(MAP_DEFAULT_PAN_X, 0).scale(defaultScale);
+        zoomSelection.call(zoomBehavior.transform, targetTransform);
+        app.mapInteraction.currentTransform = targetTransform;
+        app.suppressMapClickUntil = Date.now() + MAP_GESTURE_CLICK_SUPPRESS_MS;
       }
 
-      function wireTouchInteractionGuards() {
-        els.mapFrame.addEventListener(
-          "touchstart",
-          (event) => {
-            if (event.touches.length >= 2) {
-              event.preventDefault();
-              app.suppressMapClickUntil = Date.now() + PINCH_CLICK_SUPPRESS_MS;
-              clearHoverState();
-            }
-          },
-          { passive: false }
+      function didZoomTransformChange(previousTransform, nextTransform) {
+        return (
+          Math.abs(previousTransform.k - nextTransform.k) > ZOOM_EPSILON ||
+          Math.abs(previousTransform.x - nextTransform.x) > PAN_EPSILON ||
+          Math.abs(previousTransform.y - nextTransform.y) > PAN_EPSILON
         );
-        els.mapFrame.addEventListener(
-          "touchmove",
-          (event) => {
-            if (event.touches.length >= 2) {
-              event.preventDefault();
-              app.suppressMapClickUntil = Date.now() + PINCH_CLICK_SUPPRESS_MS;
-            }
-          },
-          { passive: false }
-        );
-        els.mapFrame.addEventListener(
-          "touchend",
-          () => {
-            app.suppressMapClickUntil = Date.now() + PINCH_CLICK_SUPPRESS_MS;
-          },
-          { passive: true }
-        );
-        els.mapFrame.addEventListener(
-          "touchcancel",
-          () => {
-            app.suppressMapClickUntil = Date.now() + PINCH_CLICK_SUPPRESS_MS;
-          },
-          { passive: true }
-        );
+      }
+
+      function updateTapMovement(event) {
+        const tapCandidate = app.mapInteraction.activeTapByPointerId.get(event.pointerId);
+        if (!tapCandidate) {
+          return;
+        }
+
+        const dx = event.clientX - tapCandidate.startX;
+        const dy = event.clientY - tapCandidate.startY;
+        if (Math.hypot(dx, dy) > TAP_MAX_MOVEMENT_PX) {
+          tapCandidate.moved = true;
+        }
+      }
+
+      function clearTapCandidate(pointerId) {
+        app.mapInteraction.activeTapByPointerId.delete(pointerId);
+      }
+
+      function isMapClickSuppressed() {
+        return Date.now() < app.suppressMapClickUntil;
       }
 
       function setOverlay(overlayKey, enabled) {
@@ -898,11 +914,13 @@
         els.mapView.classList.remove("hidden");
         clearHoverState();
         paintDistricts();
-        if (app.panZoom) {
-          requestAnimationFrame(() => {
-            app.panZoom.resize();
-          });
-        }
+        requestAnimationFrame(() => {
+          const { zoomBehavior, zoomSelection, currentTransform } = app.mapInteraction;
+          if (!window.d3 || !zoomBehavior || !zoomSelection || !currentTransform) {
+            return;
+          }
+          zoomSelection.call(zoomBehavior.transform, currentTransform);
+        });
       }
 
       function clearHoverState() {
