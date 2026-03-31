@@ -485,6 +485,7 @@
 
       async function init() {
         wireStaticControls();
+        wirePageZoomGuards();
         syncLegendColors();
         syncOverlayToggleControls();
         showMapMessage("Loading map...");
@@ -543,6 +544,62 @@
         els.toggleCountyNames.addEventListener("change", (event) => {
           setOverlay("countyNames", event.target.checked);
         });
+      }
+
+      function wirePageZoomGuards() {
+        const isInsideMapFrame = (target) => target instanceof Node && els.mapFrame.contains(target);
+
+        document.addEventListener(
+          "wheel",
+          (event) => {
+            if (!event.ctrlKey || isInsideMapFrame(event.target)) {
+              return;
+            }
+            event.preventDefault();
+          },
+          { passive: false }
+        );
+
+        document.addEventListener(
+          "touchmove",
+          (event) => {
+            if (event.touches.length < 2 || isInsideMapFrame(event.target)) {
+              return;
+            }
+            event.preventDefault();
+          },
+          { passive: false }
+        );
+
+        ["gesturestart", "gesturechange"].forEach((type) => {
+          document.addEventListener(
+            type,
+            (event) => {
+              if (isInsideMapFrame(event.target)) {
+                return;
+              }
+              event.preventDefault();
+            },
+            { passive: false }
+          );
+        });
+
+        let lastTouchEndAt = 0;
+        document.addEventListener(
+          "touchend",
+          (event) => {
+            if (isInsideMapFrame(event.target)) {
+              return;
+            }
+
+            const now = Date.now();
+            if (now - lastTouchEndAt < 320) {
+              event.preventDefault();
+            }
+            lastTouchEndAt = now;
+          },
+          { passive: false }
+        );
       }
 
       function syncLegendColors() {
