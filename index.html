@@ -35,9 +35,12 @@
         outline: none;
       }
 
-      .filter-chip.active {
+      .filter-chip.active,
+      .filter-chip.active:hover,
+      .filter-chip.active:active {
         background: #0f172a;
         color: #f8fafc;
+        border-color: #0f172a;
       }
 
       .top-stats-grid {
@@ -68,22 +71,6 @@
 
       .map-filter-chip {
         min-height: 40px;
-        padding: 0.45rem 0.6rem;
-        border-radius: 0.65rem;
-        font-size: 12px;
-        line-height: 1.1;
-        text-wrap: balance;
-        cursor: pointer;
-        -webkit-tap-highlight-color: transparent;
-        transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 90ms ease;
-      }
-
-      .map-filter-chip:hover {
-        background: #f8fafc;
-      }
-
-      .map-filter-chip:active {
-        transform: scale(0.98);
       }
 
       .overlay-toggle-grid {
@@ -296,42 +283,42 @@
               <button
                 type="button"
                 data-filter="all"
-                class="filter-chip map-filter-chip active inline-flex w-full items-center justify-center border border-slate-300 text-center font-medium text-slate-700"
+                class="filter-chip map-filter-chip active inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
               >
                 All Districts
               </button>
               <button
                 type="button"
                 data-filter="D"
-                class="filter-chip map-filter-chip inline-flex w-full items-center justify-center border border-slate-300 text-center font-medium text-slate-700"
+                class="filter-chip map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
               >
                 D-Held
               </button>
               <button
                 type="button"
                 data-filter="R"
-                class="filter-chip map-filter-chip inline-flex w-full items-center justify-center border border-slate-300 text-center font-medium text-slate-700"
+                class="filter-chip map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
               >
                 R-Held
               </button>
               <button
                 type="button"
                 data-filter="noD"
-                class="filter-chip map-filter-chip inline-flex w-full items-center justify-center border border-slate-300 text-center font-medium text-slate-700"
+                class="filter-chip map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
               >
                 No D-Candidates
               </button>
               <button
                 type="button"
                 data-filter="noR"
-                class="filter-chip map-filter-chip inline-flex w-full items-center justify-center border border-slate-300 text-center font-medium text-slate-700"
+                class="filter-chip map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
               >
                 No R-Candidates
               </button>
               <button
                 id="reset-view"
                 type="button"
-                class="map-filter-chip inline-flex w-full items-center justify-center border border-slate-300 text-center font-medium text-slate-700"
+                class="map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
               >
                 Recenter View
               </button>
