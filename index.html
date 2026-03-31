@@ -238,7 +238,6 @@
       const LARGE_SCREEN_MIN_WIDTH = 1200;
       const MAP_DEFAULT_PAN_X = -30;
       const PINCH_CLICK_SUPPRESS_MS = 250;
-      const PINCH_ZOOM_EPSILON = 0.005;
       const TAP_MAX_MOVEMENT_PX = 10;
       const TAP_MAX_DURATION_MS = 500;
 
@@ -261,12 +260,6 @@
           countyNames: null,
         },
         suppressMapClickUntil: 0,
-        touchPinch: {
-          active: false,
-          lastDistance: 0,
-          lastCenterX: 0,
-          lastCenterY: 0,
-        },
       };
 
       const els = {
@@ -361,7 +354,7 @@
           setOverlay("countyNames", event.target.checked);
         });
 
-        wireTouchPinchZoom();
+        wireTouchInteractionGuards();
       }
 
       function syncLegendColors() {
@@ -641,7 +634,7 @@
           path.addEventListener(
             "touchstart",
             (event) => {
-              if (event.touches.length !== 1 || Date.now() < app.suppressMapClickUntil || app.touchPinch.active) {
+              if (event.touches.length !== 1 || Date.now() < app.suppressMapClickUntil) {
                 tapTouchState = null;
                 return;
               }
@@ -695,8 +688,7 @@
                 !tapTouchState.moved &&
                 Math.hypot(dx, dy) <= TAP_MAX_MOVEMENT_PX &&
                 duration <= TAP_MAX_DURATION_MS &&
-                Date.now() >= app.suppressMapClickUntil &&
-                !app.touchPinch.active;
+                Date.now() >= app.suppressMapClickUntil;
 
               tapTouchState = null;
 
@@ -753,117 +745,40 @@
         app.panZoom.panBy({ x: MAP_DEFAULT_PAN_X, y: 0 });
       }
 
-      function wireTouchPinchZoom() {
-        els.mapFrame.addEventListener("touchstart", handleMapTouchStart, { passive: false });
-        els.mapFrame.addEventListener("touchmove", handleMapTouchMove, { passive: false });
-        els.mapFrame.addEventListener("touchend", handleMapTouchEnd, { passive: false });
-        els.mapFrame.addEventListener("touchcancel", handleMapTouchEnd, { passive: false });
-      }
-
-      function handleMapTouchStart(event) {
-        if (event.touches.length !== 2 || !app.panZoom) {
-          return;
-        }
-        beginPinchGesture(event.touches);
-        event.preventDefault();
-      }
-
-      function handleMapTouchMove(event) {
-        if (!app.panZoom) {
-          return;
-        }
-
-        if (event.touches.length !== 2) {
-          if (app.touchPinch.active) {
-            endPinchGesture();
-          }
-          return;
-        }
-
-        const pinch = getPinchMetrics(event.touches);
-        if (!pinch) {
-          return;
-        }
-
-        if (!app.touchPinch.active) {
-          beginPinchGesture(event.touches);
-          event.preventDefault();
-          return;
-        }
-
-        const zoomScale = pinch.distance / app.touchPinch.lastDistance;
-        if (Number.isFinite(zoomScale) && zoomScale > 0 && Math.abs(zoomScale - 1) > PINCH_ZOOM_EPSILON) {
-          app.panZoom.zoomAtPointBy(zoomScale, pinch.point);
-        }
-
-        const deltaX = pinch.point.x - app.touchPinch.lastCenterX;
-        const deltaY = pinch.point.y - app.touchPinch.lastCenterY;
-        if (Number.isFinite(deltaX) && Number.isFinite(deltaY) && (Math.abs(deltaX) > 0 || Math.abs(deltaY) > 0)) {
-          app.panZoom.panBy({ x: deltaX, y: deltaY });
-        }
-
-        app.touchPinch.lastDistance = pinch.distance;
-        app.touchPinch.lastCenterX = pinch.point.x;
-        app.touchPinch.lastCenterY = pinch.point.y;
-        app.suppressMapClickUntil = Date.now() + PINCH_CLICK_SUPPRESS_MS;
-        event.preventDefault();
-      }
-
-      function handleMapTouchEnd(event) {
-        if (event.touches.length < 2) {
-          endPinchGesture();
-          return;
-        }
-
-        const pinch = getPinchMetrics(event.touches);
-        if (!pinch) {
-          return;
-        }
-        app.touchPinch.lastDistance = pinch.distance;
-        app.touchPinch.lastCenterX = pinch.point.x;
-        app.touchPinch.lastCenterY = pinch.point.y;
-      }
-
-      function beginPinchGesture(touches) {
-        const pinch = getPinchMetrics(touches);
-        if (!pinch) {
-          return;
-        }
-        app.touchPinch.active = true;
-        app.touchPinch.lastDistance = pinch.distance;
-        app.touchPinch.lastCenterX = pinch.point.x;
-        app.touchPinch.lastCenterY = pinch.point.y;
-        app.suppressMapClickUntil = Date.now() + PINCH_CLICK_SUPPRESS_MS;
-        clearHoverState();
-      }
-
-      function endPinchGesture() {
-        app.touchPinch.active = false;
-        app.touchPinch.lastDistance = 0;
-      }
-
-      function getPinchMetrics(touches) {
-        if (!touches || touches.length < 2) {
-          return null;
-        }
-        const first = touches[0];
-        const second = touches[1];
-        const centerClientX = (first.clientX + second.clientX) / 2;
-        const centerClientY = (first.clientY + second.clientY) / 2;
-        const dx = first.clientX - second.clientX;
-        const dy = first.clientY - second.clientY;
-        const distance = Math.hypot(dx, dy);
-        if (!Number.isFinite(distance) || distance <= 0) {
-          return null;
-        }
-        const frameRect = els.mapFrame.getBoundingClientRect();
-        return {
-          distance,
-          point: {
-            x: centerClientX - frameRect.left,
-            y: centerClientY - frameRect.top,
+      function wireTouchInteractionGuards() {
+        els.mapFrame.addEventListener(
+          "touchstart",
+          (event) => {
+            if (event.touches.length >= 2) {
+              app.suppressMapClickUntil = Date.now() + PINCH_CLICK_SUPPRESS_MS;
+              clearHoverState();
+            }
           },
-        };
+          { passive: true }
+        );
+        els.mapFrame.addEventListener(
+          "touchmove",
+          (event) => {
+            if (event.touches.length >= 2) {
+              app.suppressMapClickUntil = Date.now() + PINCH_CLICK_SUPPRESS_MS;
+            }
+          },
+          { passive: true }
+        );
+        els.mapFrame.addEventListener(
+          "touchend",
+          () => {
+            app.suppressMapClickUntil = Date.now() + PINCH_CLICK_SUPPRESS_MS;
+          },
+          { passive: true }
+        );
+        els.mapFrame.addEventListener(
+          "touchcancel",
+          () => {
+            app.suppressMapClickUntil = Date.now() + PINCH_CLICK_SUPPRESS_MS;
+          },
+          { passive: true }
+        );
       }
 
       function setOverlay(overlayKey, enabled) {
