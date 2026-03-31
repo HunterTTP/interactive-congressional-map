@@ -42,11 +42,40 @@
           </h1>
         </div>
 
-        <dl class="mt-5 grid grid-cols-1 gap-3 md:grid-cols-3">
-          <div class="rounded-xl bg-slate-50 p-3">
+        <dl class="mt-5 grid grid-cols-3 gap-3">
+          <div
+            data-stat-filter="all"
+            role="button"
+            tabindex="0"
+            class="rounded-xl bg-slate-50 p-3 transition-colors hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+            aria-label="Show all districts"
+          >
             <dt class="text-xs uppercase tracking-wide text-slate-500">Districts</dt>
             <dd id="stat-districts" class="mt-1 text-xl font-semibold text-slate-900">-</dd>
           </div>
+          <div
+            data-stat-filter="D"
+            role="button"
+            tabindex="0"
+            class="rounded-xl bg-slate-50 p-3 transition-colors hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+            aria-label="Show D-Held districts"
+          >
+            <dt class="text-xs uppercase tracking-wide text-slate-500">D-Held Seats</dt>
+            <dd id="stat-dem-seats" class="mt-1 text-xl font-semibold text-slate-900">-</dd>
+          </div>
+          <div
+            data-stat-filter="R"
+            role="button"
+            tabindex="0"
+            class="rounded-xl bg-slate-50 p-3 transition-colors hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+            aria-label="Show R-Held districts"
+          >
+            <dt class="text-xs uppercase tracking-wide text-slate-500">R-Held Seats</dt>
+            <dd id="stat-rep-seats" class="mt-1 text-xl font-semibold text-slate-900">-</dd>
+          </div>
+        </dl>
+
+        <dl class="mt-3 grid grid-cols-2 gap-3">
           <div class="rounded-xl bg-slate-50 p-3">
             <dt class="text-xs uppercase tracking-wide text-slate-500">Primary Election</dt>
             <dd id="stat-primary-date" class="mt-1 text-base font-semibold text-slate-900">-</dd>
@@ -91,7 +120,7 @@
                 type="button"
                 class="rounded-md border border-slate-300 bg-white px-3 py-1 text-sm font-medium hover:bg-slate-50"
               >
-                All Districts
+                Reset View
               </button>
             </div>
           </div>
@@ -120,7 +149,36 @@
               <span class="inline-flex items-center gap-1">
                 <span id="legend-dot-other" class="h-2.5 w-2.5 rounded-full"></span>Other/Unknown
               </span>
-              <span>District borders are black.</span>
+            </div>
+
+            <div class="mt-3 border-t border-slate-200 pt-3">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Map Overlays</p>
+              <div class="mt-2 flex flex-wrap items-center gap-4 text-xs text-slate-600">
+                <label class="inline-flex cursor-pointer items-center gap-2">
+                  <input
+                    id="toggle-district-numbers"
+                    type="checkbox"
+                    class="h-3.5 w-3.5 rounded border-slate-300 text-slate-700 focus:ring-slate-400"
+                  />
+                  District numbers
+                </label>
+                <label class="inline-flex cursor-pointer items-center gap-2">
+                  <input
+                    id="toggle-county-lines"
+                    type="checkbox"
+                    class="h-3.5 w-3.5 rounded border-slate-300 text-slate-700 focus:ring-slate-400"
+                  />
+                  County lines
+                </label>
+                <label class="inline-flex cursor-pointer items-center gap-2">
+                  <input
+                    id="toggle-county-names"
+                    type="checkbox"
+                    class="h-3.5 w-3.5 rounded border-slate-300 text-slate-700 focus:ring-slate-400"
+                  />
+                  County names
+                </label>
+              </div>
             </div>
           </div>
 
@@ -155,6 +213,7 @@
         OTHER: "#b45309",
       };
       const MAP_BACKGROUND_FILL = "#f8fafc";
+      const MAP_OVERLAY_COLOR = "#cbd5e1";
 
       const app = {
         data: null,
@@ -164,10 +223,22 @@
         filter: "all",
         panZoom: null,
         districtPaths: new Map(),
+        overlays: {
+          districtNumbers: false,
+          countyLines: false,
+          countyNames: false,
+        },
+        overlayLayers: {
+          districtNumbers: null,
+          countyLines: null,
+          countyNames: null,
+        },
       };
 
       const els = {
         statDistricts: document.getElementById("stat-districts"),
+        statDemSeats: document.getElementById("stat-dem-seats"),
+        statRepSeats: document.getElementById("stat-rep-seats"),
         statPrimaryDate: document.getElementById("stat-primary-date"),
         statGeneralDate: document.getElementById("stat-general-date"),
         mapView: document.getElementById("map-view"),
@@ -184,6 +255,9 @@
         legendDotD: document.getElementById("legend-dot-d"),
         legendDotR: document.getElementById("legend-dot-r"),
         legendDotOther: document.getElementById("legend-dot-other"),
+        toggleDistrictNumbers: document.getElementById("toggle-district-numbers"),
+        toggleCountyLines: document.getElementById("toggle-county-lines"),
+        toggleCountyNames: document.getElementById("toggle-county-names"),
       };
 
       init();
@@ -191,6 +265,7 @@
       async function init() {
         wireStaticControls();
         syncLegendColors();
+        syncOverlayToggleControls();
         showMapMessage("Loading map...");
 
         try {
@@ -203,7 +278,7 @@
           renderHeaderStats();
 
           const mapParts = buildInteractiveMap(svgText);
-          mountMap(mapParts.svg, mapParts.districtGroup);
+          mountMap(mapParts.svg, mapParts.districtGroup, mapParts.overlayLayers);
 
           setFilter("all");
           renderSelectedDistrict();
@@ -219,6 +294,16 @@
         document.querySelectorAll("[data-filter]").forEach((button) => {
           button.addEventListener("click", () => setFilter(button.dataset.filter));
         });
+        document.querySelectorAll("[data-stat-filter]").forEach((card) => {
+          const applyStatFilter = () => setFilter(card.dataset.statFilter);
+          card.addEventListener("click", applyStatFilter);
+          card.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              applyStatFilter();
+            }
+          });
+        });
 
         els.resetView.addEventListener("click", () => {
           setFilter("all");
@@ -231,12 +316,29 @@
         });
 
         els.backToMap.addEventListener("click", showMapView);
+        els.toggleDistrictNumbers.addEventListener("change", (event) => {
+          setOverlay("districtNumbers", event.target.checked);
+        });
+        els.toggleCountyLines.addEventListener("change", (event) => {
+          setOverlay("countyLines", event.target.checked);
+        });
+        els.toggleCountyNames.addEventListener("change", (event) => {
+          setOverlay("countyNames", event.target.checked);
+        });
       }
 
       function syncLegendColors() {
         els.legendDotD.style.backgroundColor = DISTRICT_FILL_DARK_BY_PARTY.D;
         els.legendDotR.style.backgroundColor = DISTRICT_FILL_DARK_BY_PARTY.R;
         els.legendDotOther.style.backgroundColor = DISTRICT_FILL_DARK_BY_PARTY.OTHER;
+        els.statDemSeats.style.color = DISTRICT_FILL_DARK_BY_PARTY.D;
+        els.statRepSeats.style.color = DISTRICT_FILL_DARK_BY_PARTY.R;
+      }
+
+      function syncOverlayToggleControls() {
+        els.toggleDistrictNumbers.checked = app.overlays.districtNumbers;
+        els.toggleCountyLines.checked = app.overlays.countyLines;
+        els.toggleCountyNames.checked = app.overlays.countyNames;
       }
 
       async function loadJson(path) {
@@ -269,8 +371,12 @@
 
       function renderHeaderStats() {
         const districts = app.data.districts;
+        const demSeats = districts.filter((district) => district.current_holder?.party === "D").length;
+        const repSeats = districts.filter((district) => district.current_holder?.party === "R").length;
 
         els.statDistricts.textContent = String(districts.length);
+        els.statDemSeats.textContent = String(demSeats);
+        els.statRepSeats.textContent = String(repSeats);
         els.statPrimaryDate.textContent = formatDate(app.data.primary_date);
         els.statGeneralDate.textContent = formatDate(app.data.general_election_date);
       }
@@ -295,6 +401,8 @@
         svg.setAttribute("viewBox", viewBox);
         svg.setAttribute("aria-label", "Interactive Florida congressional districts map");
         svg.setAttribute("role", "img");
+        const defs = document.createElementNS(ns, "defs");
+        let countyLinesClipId = null;
 
         const background = document.createElementNS(ns, "rect");
         background.setAttribute("x", String(Number.isFinite(x) ? x : 0));
@@ -313,6 +421,22 @@
           outline.setAttribute("vector-effect", "non-scaling-stroke");
           outline.setAttribute("pointer-events", "none");
           svg.appendChild(outline);
+
+          countyLinesClipId = "state-boundary-clip";
+          const countyLinesClip = document.createElementNS(ns, "clipPath");
+          countyLinesClip.setAttribute("id", countyLinesClipId);
+          countyLinesClip.setAttribute("clipPathUnits", "userSpaceOnUse");
+          const clipShape = outlineSource.cloneNode(true);
+          clipShape.setAttribute("fill", "#ffffff");
+          clipShape.setAttribute("stroke", "none");
+          clipShape.setAttribute("stroke-width", "0");
+          clipShape.removeAttribute("vector-effect");
+          clipShape.setAttribute("pointer-events", "none");
+          countyLinesClip.appendChild(clipShape);
+          defs.appendChild(countyLinesClip);
+        }
+        if (defs.childElementCount > 0) {
+          svg.appendChild(defs);
         }
 
         const districtGroup = sourceDistrictGroup.cloneNode(true);
@@ -336,14 +460,116 @@
         });
 
         svg.appendChild(districtGroup);
-        return { svg, districtGroup };
+        const countyLinesLayer = document.createElementNS(ns, "g");
+        countyLinesLayer.setAttribute("id", "county-lines-layer");
+        countyLinesLayer.setAttribute("pointer-events", "none");
+        if (countyLinesClipId) {
+          countyLinesLayer.setAttribute("clip-path", `url(#${countyLinesClipId})`);
+        }
+
+        ["g#tl_2021_us_county", "g#tl_2021_us_county1"].forEach((selector) => {
+          const sourceGroup = sourceSvg.querySelector(selector);
+          if (!sourceGroup) {
+            return;
+          }
+
+          sourceGroup.querySelectorAll("path").forEach((sourcePath) => {
+            const path = sourcePath.cloneNode(true);
+            path.setAttribute("fill", "none");
+            path.setAttribute("fill-opacity", "0");
+            path.setAttribute("stroke", MAP_OVERLAY_COLOR);
+            path.setAttribute("stroke-width", "0.45");
+            path.setAttribute("vector-effect", "non-scaling-stroke");
+            path.setAttribute("pointer-events", "none");
+            countyLinesLayer.appendChild(path);
+          });
+        });
+
+        const districtBordersLayer = document.createElementNS(ns, "g");
+        districtBordersLayer.setAttribute("id", "district-borders-layer");
+        districtBordersLayer.setAttribute("pointer-events", "none");
+        districtGroup.querySelectorAll("path").forEach((sourcePath) => {
+          const path = sourcePath.cloneNode(true);
+          path.removeAttribute("id");
+          path.removeAttribute("data-district");
+          path.removeAttribute("tabindex");
+          path.removeAttribute("role");
+          path.removeAttribute("aria-label");
+          path.setAttribute("fill", "none");
+          path.setAttribute("fill-opacity", "0");
+          path.setAttribute("stroke", "#000000");
+          path.setAttribute("stroke-width", "0.8");
+          path.setAttribute("vector-effect", "non-scaling-stroke");
+          path.setAttribute("pointer-events", "none");
+          path.classList.remove("district-shape");
+          path.classList.remove("is-hovered");
+          districtBordersLayer.appendChild(path);
+        });
+
+        let countyNamesLayer = null;
+        const sourceCountyNamesLayer = sourceSvg.querySelector("g#layer3");
+        if (sourceCountyNamesLayer) {
+          countyNamesLayer = sourceCountyNamesLayer.cloneNode(true);
+          countyNamesLayer.setAttribute("id", "county-names-layer");
+          countyNamesLayer.setAttribute("pointer-events", "none");
+          countyNamesLayer.querySelectorAll("text").forEach((text) => {
+            text.setAttribute("fill", MAP_OVERLAY_COLOR);
+            text.setAttribute("stroke", "none");
+            text.setAttribute("font-weight", "400");
+            text.setAttribute("fill-opacity", "1");
+            text.setAttribute("pointer-events", "none");
+          });
+        }
+
+        let districtNumbersLayer = null;
+        const sourceDistrictNumbersLayer = sourceSvg.querySelector("g#layer1");
+        if (sourceDistrictNumbersLayer) {
+          districtNumbersLayer = sourceDistrictNumbersLayer.cloneNode(true);
+          districtNumbersLayer.setAttribute("id", "district-numbers-layer");
+          districtNumbersLayer.setAttribute("pointer-events", "none");
+          districtNumbersLayer.querySelectorAll("text").forEach((text) => {
+            text.setAttribute("fill", MAP_OVERLAY_COLOR);
+            text.setAttribute("stroke", "none");
+            text.setAttribute("font-weight", "400");
+            text.setAttribute("fill-opacity", "1");
+            text.setAttribute("pointer-events", "none");
+          });
+        }
+
+        countyLinesLayer.style.display = "none";
+        if (countyLinesLayer.childElementCount > 0) {
+          svg.appendChild(countyLinesLayer);
+        }
+        if (districtBordersLayer.childElementCount > 0) {
+          svg.appendChild(districtBordersLayer);
+        }
+        if (countyNamesLayer) {
+          countyNamesLayer.style.display = "none";
+          svg.appendChild(countyNamesLayer);
+        }
+        if (districtNumbersLayer) {
+          districtNumbersLayer.style.display = "none";
+          svg.appendChild(districtNumbersLayer);
+        }
+
+        return {
+          svg,
+          districtGroup,
+          overlayLayers: {
+            districtNumbers: districtNumbersLayer,
+            countyLines: countyLinesLayer.childElementCount > 0 ? countyLinesLayer : null,
+            countyNames: countyNamesLayer,
+          },
+        };
       }
 
-      function mountMap(svg, districtGroup) {
+      function mountMap(svg, districtGroup, overlayLayers) {
         els.mapViewport.innerHTML = "";
         els.mapViewport.appendChild(svg);
         app.mapSvg = svg;
         app.districtPaths.clear();
+        app.overlayLayers = overlayLayers;
+        applyOverlayVisibility();
 
         districtGroup.querySelectorAll("path").forEach((path) => {
           const districtNumber = Number(path.getAttribute("data-district"));
@@ -391,6 +617,24 @@
             maxZoom: 11,
           });
         }
+      }
+
+      function setOverlay(overlayKey, enabled) {
+        app.overlays[overlayKey] = enabled;
+        applyOverlayVisibility();
+      }
+
+      function applyOverlayVisibility() {
+        setOverlayLayerVisibility(app.overlayLayers.districtNumbers, app.overlays.districtNumbers);
+        setOverlayLayerVisibility(app.overlayLayers.countyLines, app.overlays.countyLines);
+        setOverlayLayerVisibility(app.overlayLayers.countyNames, app.overlays.countyNames);
+      }
+
+      function setOverlayLayerVisibility(layer, visible) {
+        if (!layer) {
+          return;
+        }
+        layer.style.display = visible ? "block" : "none";
       }
 
       function openDistrictCard(districtNumber) {
