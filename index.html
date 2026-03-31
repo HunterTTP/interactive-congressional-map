@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Florida Congressional District Candidate Map</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+    <style>
+      #map-frame svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .district-shape {
+        cursor: pointer;
+        transition: opacity 120ms ease, stroke-width 120ms ease, filter 120ms ease;
+      }
+
+      .district-shape.is-hovered {
+        stroke: #0f172a;
+        stroke-width: 2.3;
+        filter: brightness(1.04);
+      }
+
+      .filter-chip.active {
+        background: #0f172a;
+        color: #f8fafc;
+      }
+
+    </style>
+  </head>
+  <body class="min-h-screen bg-slate-100 text-slate-900">
+    <main class="mx-auto max-w-[1500px] p-4 md:p-6 lg:p-8">
+      <header class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:p-6">
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
+            <span class="block">Florida Congressional Candidate Map</span>
+            <span class="mt-1 block text-base font-medium text-slate-600 md:text-lg">
+              U.S. House of Representatives in Florida
+            </span>
+          </h1>
+        </div>
+
+        <dl class="mt-5 grid grid-cols-1 gap-3 md:grid-cols-3">
+          <div class="rounded-xl bg-slate-50 p-3">
+            <dt class="text-xs uppercase tracking-wide text-slate-500">Districts</dt>
+            <dd id="stat-districts" class="mt-1 text-xl font-semibold text-slate-900">-</dd>
+          </div>
+          <div class="rounded-xl bg-slate-50 p-3">
+            <dt class="text-xs uppercase tracking-wide text-slate-500">Primary Election</dt>
+            <dd id="stat-primary-date" class="mt-1 text-base font-semibold text-slate-900">-</dd>
+          </div>
+          <div class="rounded-xl bg-slate-50 p-3">
+            <dt class="text-xs uppercase tracking-wide text-slate-500">General Election</dt>
+            <dd id="stat-general-date" class="mt-1 text-base font-semibold text-slate-900">-</dd>
+          </div>
+        </dl>
+      </header>
+
+      <div class="mt-6">
+        <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-5">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap gap-2">
+              <button
+                type="button"
+                data-filter="all"
+                class="filter-chip active rounded-full border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700"
+              >
+                All Districts
+              </button>
+              <button
+                type="button"
+                data-filter="D"
+                class="filter-chip rounded-full border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700"
+              >
+                D-Held
+              </button>
+              <button
+                type="button"
+                data-filter="R"
+                class="filter-chip rounded-full border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700"
+              >
+                R-Held
+              </button>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button
+                id="reset-view"
+                type="button"
+                class="rounded-md border border-slate-300 bg-white px-3 py-1 text-sm font-medium hover:bg-slate-50"
+              >
+                All Districts
+              </button>
+            </div>
+          </div>
+
+          <div id="map-view" class="mt-4">
+            <div
+              id="map-frame"
+              class="relative h-[62vh] min-h-[500px] overflow-hidden rounded-xl border border-slate-200 bg-slate-50"
+            >
+              <div id="map-viewport" class="absolute inset-0 grid place-items-center text-sm text-slate-500">
+                Loading map...
+              </div>
+              <div
+                id="map-tooltip"
+                class="pointer-events-none absolute hidden max-h-[360px] max-w-[360px] overflow-auto rounded-md border border-slate-300 bg-white px-3 py-2 text-xs shadow-lg"
+              ></div>
+            </div>
+
+            <div class="mt-3 flex flex-wrap items-center gap-3 text-xs text-slate-500">
+              <span class="inline-flex items-center gap-1">
+                <span class="h-2.5 w-2.5 rounded-full" style="background-color: #1d4ed8;"></span>D-held
+              </span>
+              <span class="inline-flex items-center gap-1">
+                <span class="h-2.5 w-2.5 rounded-full" style="background-color: #b91c1c;"></span>R-held
+              </span>
+              <span class="inline-flex items-center gap-1">
+                <span class="h-2.5 w-2.5 rounded-full" style="background-color: #b45309;"></span>Other/Unknown
+              </span>
+              <span>District borders are black.</span>
+            </div>
+          </div>
+
+          <div id="district-card-view" class="mt-4 hidden rounded-xl border border-slate-200 bg-slate-50 p-4 md:p-5">
+            <button
+              id="back-to-map"
+              type="button"
+              class="rounded-md border border-slate-300 bg-white px-3 py-1 text-sm font-medium hover:bg-slate-50"
+            >
+              Back to map
+            </button>
+
+            <h2 id="selected-title" class="mt-4 text-xl font-semibold text-slate-900">District -</h2>
+            <section id="selected-incumbent-card" class="mt-4 rounded-lg border border-slate-200 p-3">
+              <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Current Seat Holder</h3>
+              <p id="selected-incumbent" class="mt-2 text-sm text-slate-700"></p>
+            </section>
+
+            <section class="mt-4">
+              <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Candidates</h3>
+              <div id="candidate-lists" class="mt-3 space-y-3"></div>
+            </section>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      const DISTRICT_FILL_DARK_BY_PARTY = {
+        D: "#1d4ed8",
+        R: "#b91c1c",
+        OTHER: "#b45309",
+      };
+      const DISTRICT_FILL_LIGHT_BY_PARTY = {
+        D: "#60a5fa",
+        R: "#f87171",
+        OTHER: "#fbbf24",
+      };
+
+      const app = {
+        data: null,
+        mapSvg: null,
+        selectedDistrict: null,
+        hoveredDistrict: null,
+        filter: "all",
+        panZoom: null,
+        districtPaths: new Map(),
+      };
+
+      const els = {
+        statDistricts: document.getElementById("stat-districts"),
+        statPrimaryDate: document.getElementById("stat-primary-date"),
+        statGeneralDate: document.getElementById("stat-general-date"),
+        mapView: document.getElementById("map-view"),
+        districtCardView: document.getElementById("district-card-view"),
+        backToMap: document.getElementById("back-to-map"),
+        mapFrame: document.getElementById("map-frame"),
+        mapViewport: document.getElementById("map-viewport"),
+        mapTooltip: document.getElementById("map-tooltip"),
+        resetView: document.getElementById("reset-view"),
+        selectedTitle: document.getElementById("selected-title"),
+        selectedIncumbentCard: document.getElementById("selected-incumbent-card"),
+        selectedIncumbent: document.getElementById("selected-incumbent"),
+        candidateLists: document.getElementById("candidate-lists"),
+      };
+
+      init();
+
+      async function init() {
+        wireStaticControls();
+        showMapMessage("Loading map...");
+
+        try {
+          const [rawData, svgText] = await Promise.all([
+            loadJson("./fl-congressional-district-candidates.json"),
+            loadText("./florida-congressional-districts.svg"),
+          ]);
+
+          app.data = normalizeData(rawData);
+          renderHeaderStats();
+
+          const mapParts = buildInteractiveMap(svgText);
+          mountMap(mapParts.svg, mapParts.districtGroup);
+
+          setFilter("all");
+          renderSelectedDistrict();
+        } catch (error) {
+          const message =
+            "Could not load local files. Serve this folder over HTTP (for example: `python -m http.server`) and reload.";
+          showMapMessage(message, true);
+          console.error(error);
+        }
+      }
+
+      function wireStaticControls() {
+        document.querySelectorAll("[data-filter]").forEach((button) => {
+          button.addEventListener("click", () => setFilter(button.dataset.filter));
+        });
+
+        els.resetView.addEventListener("click", () => {
+          setFilter("all");
+          showMapView();
+          if (!app.panZoom) {
+            return;
+          }
+          app.panZoom.resetZoom();
+          app.panZoom.center();
+        });
+
+        els.backToMap.addEventListener("click", showMapView);
+      }
+
+      async function loadJson(path) {
+        const response = await fetch(path);
+        if (!response.ok) {
+          throw new Error(`JSON request failed: ${response.status}`);
+        }
+        return response.json();
+      }
+
+      async function loadText(path) {
+        const response = await fetch(path);
+        if (!response.ok) {
+          throw new Error(`SVG request failed: ${response.status}`);
+        }
+        return response.text();
+      }
+
+      function normalizeData(rawData) {
+        if (!rawData || !Array.isArray(rawData.districts) || rawData.districts.length === 0) {
+          throw new Error("Candidate JSON has no districts.");
+        }
+
+        const districts = rawData.districts
+          .map((district) => ({ ...district }))
+          .sort((a, b) => a.district - b.district);
+
+        return { ...rawData, districts };
+      }
+
+      function renderHeaderStats() {
+        const districts = app.data.districts;
+
+        els.statDistricts.textContent = String(districts.length);
+        els.statPrimaryDate.textContent = formatDate(app.data.primary_date);
+        els.statGeneralDate.textContent = formatDate(app.data.general_election_date);
+      }
+
+      function buildInteractiveMap(svgText) {
+        const ns = "http://www.w3.org/2000/svg";
+        const parsed = new DOMParser().parseFromString(svgText, "image/svg+xml");
+        if (parsed.querySelector("parsererror")) {
+          throw new Error("Unable to parse SVG.");
+        }
+
+        const sourceSvg = parsed.documentElement;
+        const sourceDistrictGroup = sourceSvg.querySelector("g#tl_rd22_12_cd118");
+        if (!sourceDistrictGroup) {
+          throw new Error("District group `tl_rd22_12_cd118` not found in SVG.");
+        }
+
+        const viewBox = sourceSvg.getAttribute("viewBox") || "0 0 800 651";
+        const [x, y, w, h] = viewBox.split(/\s+/).map(Number);
+
+        const svg = document.createElementNS(ns, "svg");
+        svg.setAttribute("viewBox", viewBox);
+        svg.setAttribute("aria-label", "Interactive Florida congressional districts map");
+        svg.setAttribute("role", "img");
+
+        const background = document.createElementNS(ns, "rect");
+        background.setAttribute("x", String(Number.isFinite(x) ? x : 0));
+        background.setAttribute("y", String(Number.isFinite(y) ? y : 0));
+        background.setAttribute("width", String(Number.isFinite(w) ? w : 800));
+        background.setAttribute("height", String(Number.isFinite(h) ? h : 651));
+        background.setAttribute("fill", "#f8fafc");
+        svg.appendChild(background);
+
+        const outlineSource = sourceSvg.querySelector("g#layer2 > path");
+        if (outlineSource) {
+          const outline = outlineSource.cloneNode(true);
+          outline.setAttribute("fill", "#e5efff");
+          outline.setAttribute("stroke", "#94a3b8");
+          outline.setAttribute("stroke-width", "1.2");
+          outline.setAttribute("vector-effect", "non-scaling-stroke");
+          outline.setAttribute("pointer-events", "none");
+          svg.appendChild(outline);
+        }
+
+        const districtGroup = sourceDistrictGroup.cloneNode(true);
+        districtGroup.setAttribute("id", "district-layer");
+
+        districtGroup.querySelectorAll("path").forEach((path) => {
+          const districtNumber = parseDistrictNumber(path.getAttribute("id"));
+          if (!districtNumber) {
+            path.remove();
+            return;
+          }
+
+          path.setAttribute("data-district", String(districtNumber));
+          path.setAttribute("tabindex", "0");
+          path.setAttribute("role", "button");
+          path.setAttribute("aria-label", `Congressional District ${districtNumber}`);
+          path.setAttribute("stroke", "#000000");
+          path.setAttribute("stroke-width", "0.8");
+          path.setAttribute("vector-effect", "non-scaling-stroke");
+          path.classList.add("district-shape");
+        });
+
+        svg.appendChild(districtGroup);
+        return { svg, districtGroup };
+      }
+
+      function mountMap(svg, districtGroup) {
+        els.mapViewport.innerHTML = "";
+        els.mapViewport.appendChild(svg);
+        app.mapSvg = svg;
+        app.districtPaths.clear();
+
+        districtGroup.querySelectorAll("path").forEach((path) => {
+          const districtNumber = Number(path.getAttribute("data-district"));
+          app.districtPaths.set(districtNumber, path);
+
+          path.addEventListener("mouseenter", (event) => {
+            app.hoveredDistrict = districtNumber;
+            path.classList.add("is-hovered");
+            showTooltip(districtNumber, event);
+          });
+
+          path.addEventListener("mousemove", (event) => {
+            if (app.hoveredDistrict === districtNumber) {
+              moveTooltip(event);
+            }
+          });
+
+          path.addEventListener("mouseleave", () => {
+            app.hoveredDistrict = null;
+            path.classList.remove("is-hovered");
+            hideTooltip();
+          });
+
+          path.addEventListener("click", () => {
+            openDistrictCard(districtNumber);
+          });
+
+          path.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              openDistrictCard(districtNumber);
+            }
+          });
+        });
+
+        if (typeof svgPanZoom === "function") {
+          app.panZoom = svgPanZoom(svg, {
+            zoomEnabled: true,
+            controlIconsEnabled: false,
+            panEnabled: true,
+            fit: true,
+            center: true,
+            mouseWheelZoomEnabled: true,
+            minZoom: 1,
+            maxZoom: 11,
+          });
+        }
+      }
+
+      function openDistrictCard(districtNumber) {
+        if (!districtNumber || !app.data) {
+          return;
+        }
+
+        const district = getDistrict(districtNumber);
+        if (!district || !matchesFilter(district)) {
+          return;
+        }
+
+        app.selectedDistrict = districtNumber;
+        renderSelectedDistrict();
+        clearHoverState();
+        els.mapView.classList.add("hidden");
+        els.districtCardView.classList.remove("hidden");
+      }
+
+      function setFilter(filter) {
+        app.filter = filter;
+
+        document.querySelectorAll("[data-filter]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.filter === filter);
+        });
+
+        const visible = app.data ? app.data.districts.filter(matchesFilter) : [];
+        if (visible.length === 0) {
+          app.selectedDistrict = null;
+        } else if (!visible.some((district) => district.district === app.selectedDistrict)) {
+          app.selectedDistrict = null;
+        }
+
+        if (!app.selectedDistrict && !els.districtCardView.classList.contains("hidden")) {
+          showMapView();
+        }
+
+        paintDistricts();
+        renderSelectedDistrict();
+      }
+
+      function paintDistricts() {
+        if (!app.data) {
+          return;
+        }
+
+        app.data.districts.forEach((district) => {
+          const path = app.districtPaths.get(district.district);
+          if (!path) {
+            return;
+          }
+
+          const visible = matchesFilter(district);
+          path.setAttribute("fill", visible ? getDistrictColor(district) : getFilteredOutColor());
+          path.style.opacity = "1";
+          path.style.pointerEvents = visible ? "auto" : "none";
+          if (district.district !== app.hoveredDistrict) path.classList.remove("is-hovered");
+        });
+      }
+
+      function renderSelectedDistrict() {
+        if (!app.data || !app.selectedDistrict) {
+          els.selectedTitle.textContent = "District -";
+          els.selectedIncumbent.textContent = "";
+          applySeatHolderCardStyle(null, els.selectedIncumbentCard);
+          els.candidateLists.innerHTML = "";
+          return;
+        }
+
+        const district = getDistrict(app.selectedDistrict);
+        if (!district) {
+          return;
+        }
+
+        els.selectedTitle.textContent = `District ${district.district}`;
+        els.selectedIncumbent.textContent = `${district.current_holder.name} (${district.current_holder.party})`;
+        applySeatHolderCardStyle(district, els.selectedIncumbentCard);
+
+        els.candidateLists.innerHTML = "";
+        els.candidateLists.appendChild(
+          buildCandidateSection("Democratic", district.candidates.democratic, "bg-blue-50 border-blue-200")
+        );
+        els.candidateLists.appendChild(
+          buildCandidateSection("Republican", district.candidates.republican, "bg-red-50 border-red-200")
+        );
+        els.candidateLists.appendChild(
+          buildCandidateSection("Other", district.candidates.other, "bg-amber-50 border-amber-200")
+        );
+      }
+
+      function showMapView() {
+        app.selectedDistrict = null;
+        renderSelectedDistrict();
+        els.districtCardView.classList.add("hidden");
+        els.mapView.classList.remove("hidden");
+        clearHoverState();
+        paintDistricts();
+        if (app.panZoom) {
+          requestAnimationFrame(() => {
+            app.panZoom.resize();
+          });
+        }
+      }
+
+      function clearHoverState() {
+        app.hoveredDistrict = null;
+        app.districtPaths.forEach((path) => path.classList.remove("is-hovered"));
+        hideTooltip();
+      }
+
+      function buildCandidateSection(title, candidates, classes) {
+        const section = document.createElement("section");
+        section.className = `rounded-xl border p-3 ${classes}`;
+
+        const heading = document.createElement("h4");
+        heading.className = "text-sm font-semibold text-slate-800";
+        heading.textContent = `${title} Candidates`;
+        section.appendChild(heading);
+
+        if (!candidates.length) {
+          const empty = document.createElement("p");
+          empty.className = "mt-1 text-sm text-slate-600";
+          empty.textContent = "No candidates listed.";
+          section.appendChild(empty);
+          return section;
+        }
+
+        const list = document.createElement("ul");
+        list.className = "mt-2 space-y-1";
+
+        const sortedCandidates = [...candidates].sort((a, b) =>
+          String(a.name).localeCompare(String(b.name), undefined, { sensitivity: "base" })
+        );
+
+        sortedCandidates.forEach((candidate) => {
+          const item = document.createElement("li");
+          item.className = "rounded-md bg-white/80 px-2 py-1 text-sm text-slate-700";
+          item.textContent = `${candidate.name} (${candidate.party})`;
+          list.appendChild(item);
+        });
+
+        section.appendChild(list);
+        return section;
+      }
+
+      function showTooltip(districtNumber, event = null) {
+        const district = getDistrict(districtNumber);
+        if (!district) {
+          return;
+        }
+
+        const seatHolderStyle = getSeatHolderCardStyle(district);
+        const democraticCount = district.candidates.democratic.length;
+        const republicanCount = district.candidates.republican.length;
+        const otherCount = district.candidates.other.length;
+        els.mapTooltip.innerHTML = `
+          <p class="font-semibold text-slate-900">District ${district.district}</p>
+          <div class="mt-2 rounded-md border p-2" style="background-color: ${seatHolderStyle.bg}; border-color: ${seatHolderStyle.border};">
+            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Current Seat Holder</p>
+            <p class="mt-1 text-slate-700">
+              ${escapeHtml(district.current_holder.name)} (${escapeHtml(district.current_holder.party)})
+            </p>
+          </div>
+          <div class="mt-2 rounded-md border border-slate-200 bg-white p-2">
+            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Candidate Counts</p>
+            <p class="mt-1 text-slate-700">Democratic: ${democraticCount}</p>
+            <p class="text-slate-700">Republican: ${republicanCount}</p>
+            <p class="text-slate-700">Other: ${otherCount}</p>
+          </div>
+          <p class="mt-2 border-t border-slate-200 pt-2 text-slate-700">Click for details</p>
+        `;
+        els.mapTooltip.classList.remove("hidden");
+        if (event && typeof event.clientX === "number" && typeof event.clientY === "number") {
+          moveTooltip(event);
+        } else {
+          pinTooltipTopLeft();
+        }
+      }
+
+      function moveTooltip(event) {
+        const frameRect = els.mapFrame.getBoundingClientRect();
+        const tooltip = els.mapTooltip;
+
+        let x = event.clientX - frameRect.left + 12;
+        let y = event.clientY - frameRect.top + 12;
+
+        const maxX = frameRect.width - tooltip.offsetWidth - 8;
+        const maxY = frameRect.height - tooltip.offsetHeight - 8;
+
+        x = Math.max(8, Math.min(x, maxX));
+        y = Math.max(8, Math.min(y, maxY));
+
+        tooltip.style.transform = `translate(${x}px, ${y}px)`;
+      }
+
+      function hideTooltip() {
+        els.mapTooltip.classList.add("hidden");
+      }
+
+      function pinTooltipTopLeft() {
+        els.mapTooltip.style.transform = "translate(12px, 12px)";
+      }
+
+      function applySeatHolderCardStyle(district, element) {
+        if (!element) {
+          return;
+        }
+        const style = getSeatHolderCardStyle(district);
+        element.style.backgroundColor = style.bg;
+        element.style.borderColor = style.border;
+      }
+
+      function getSeatHolderCardStyle(district) {
+        const party = getPartyKey(district);
+        if (party === "D") {
+          return { bg: "#dbeafe", border: "#60a5fa" };
+        }
+        if (party === "R") {
+          return { bg: "#fee2e2", border: "#f87171" };
+        }
+        return { bg: "#fef3c7", border: "#fbbf24" };
+      }
+
+      function getDistrictColor(district) {
+        const party = getPartyKey(district);
+        return DISTRICT_FILL_DARK_BY_PARTY[party];
+      }
+
+      function getFilteredOutColor() {
+        if (app.filter === "D") {
+          return DISTRICT_FILL_LIGHT_BY_PARTY.R;
+        }
+        if (app.filter === "R") {
+          return DISTRICT_FILL_LIGHT_BY_PARTY.D;
+        }
+        return "#e2e8f0";
+      }
+
+      function matchesFilter(district) {
+        if (app.filter === "all") {
+          return true;
+        }
+        return district.current_holder?.party === app.filter;
+      }
+
+      function getPartyKey(district) {
+        if (district?.current_holder?.party === "D") {
+          return "D";
+        }
+        if (district?.current_holder?.party === "R") {
+          return "R";
+        }
+        return "OTHER";
+      }
+
+      function getDistrict(districtNumber) {
+        return app.data?.districts.find((district) => district.district === districtNumber) ?? null;
+      }
+
+      function parseDistrictNumber(idValue) {
+        if (!idValue) {
+          return null;
+        }
+        const match = String(idValue).match(/(\d+)\s*$/);
+        return match ? Number(match[1]) : null;
+      }
+
+      function formatDate(isoDate) {
+        if (!isoDate) {
+          return "N/A";
+        }
+        const date = new Date(`${isoDate}T12:00:00`);
+        return new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" }).format(date);
+      }
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, (char) => {
+          if (char === "&") return "&amp;";
+          if (char === "<") return "&lt;";
+          if (char === ">") return "&gt;";
+          if (char === '"') return "&quot;";
+          return "&#39;";
+        });
+      }
+
+      function showMapMessage(message, isError = false) {
+        els.mapViewport.innerHTML = "";
+        const text = document.createElement("p");
+        text.className = `px-5 text-center text-sm ${isError ? "text-rose-600" : "text-slate-500"}`;
+        text.textContent = message;
+        els.mapViewport.appendChild(text);
+      }
+    </script>
+  </body>
+</html>
