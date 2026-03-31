@@ -73,6 +73,17 @@
         font-size: 12px;
         line-height: 1.1;
         text-wrap: balance;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 90ms ease;
+      }
+
+      .map-filter-chip:hover {
+        background: #f8fafc;
+      }
+
+      .map-filter-chip:active {
+        transform: scale(0.98);
       }
 
       .overlay-toggle-grid {
@@ -322,7 +333,7 @@
                 type="button"
                 class="map-filter-chip inline-flex w-full items-center justify-center border border-slate-300 text-center font-medium text-slate-700"
               >
-                Reset View
+                Recenter View
               </button>
             </div>
           </div>
@@ -516,7 +527,6 @@
         });
 
         els.resetView.addEventListener("click", () => {
-          setFilter("all");
           showMapView();
           requestAnimationFrame(() => {
             applyDefaultMapView();
