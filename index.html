@@ -10,6 +10,7 @@
       #map-frame {
         touch-action: none;
         overscroll-behavior: contain;
+        background: transparent;
       }
 
       #map-frame svg {
@@ -38,9 +39,287 @@
       .filter-chip.active,
       .filter-chip.active:hover,
       .filter-chip.active:active {
+        background: #eff6ff;
+        color: #1e3a8a;
+        border-color: #1d4ed8;
+        box-shadow: 0 0 0 1px rgba(29, 78, 216, 0.35);
+      }
+
+      .app-nav {
+        position: sticky;
+        top: 0;
+        z-index: 60;
+        border-bottom: 1px solid #e2e8f0;
+        background: rgba(255, 255, 255, 0.86);
+        backdrop-filter: blur(12px);
+      }
+
+      .menu-toggle {
+        width: 2.5rem;
+        height: 2.5rem;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.26rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 0.6rem;
+        background: #ffffff;
+        transition: background-color 120ms ease, border-color 120ms ease;
+      }
+
+      .menu-toggle:hover {
+        background: #f8fafc;
+      }
+
+      .menu-toggle-line {
+        width: 1rem;
+        height: 2px;
+        border-radius: 999px;
+        background: #334155;
+        transition: transform 140ms ease, opacity 140ms ease;
+      }
+
+      .menu-toggle.is-open .menu-toggle-line:nth-child(1) {
+        transform: translateY(6px) rotate(45deg);
+      }
+
+      .menu-toggle.is-open .menu-toggle-line:nth-child(2) {
+        opacity: 0;
+      }
+
+      .menu-toggle.is-open .menu-toggle-line:nth-child(3) {
+        transform: translateY(-6px) rotate(-45deg);
+      }
+
+      .menu-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 64;
+        background: rgba(15, 23, 42, 0.45);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 170ms ease;
+      }
+
+      .menu-backdrop.is-open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .mobile-drawer {
+        position: fixed;
+        top: 0;
+        right: 0;
+        z-index: 70;
+        width: min(86vw, 20rem);
+        height: 100dvh;
+        padding: 1rem;
+        border-left: 1px solid #e2e8f0;
+        background: #ffffff;
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+        transform: translateX(100%);
+        transition: transform 190ms ease;
+      }
+
+      .mobile-drawer.is-open {
+        transform: translateX(0);
+      }
+
+      .mobile-nav-link {
+        min-height: 44px;
+        border: 1px solid #cbd5e1;
+        border-radius: 0.65rem;
+        background: #ffffff;
+        padding: 0.6rem 0.75rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #334155;
+        display: inline-flex;
+        align-items: center;
+      }
+
+      .theme-switch {
+        position: relative;
+        min-height: 44px;
+        border: 1px solid #cbd5e1;
+        border-radius: 0.65rem;
+        background: #ffffff;
+        padding: 0.5rem 0.65rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.65rem;
+        cursor: pointer;
+      }
+
+      .theme-switch input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+      }
+
+      .theme-switch-text {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #334155;
+      }
+
+      .theme-switch-track {
+        position: relative;
+        width: 38px;
+        height: 22px;
+        border-radius: 999px;
+        background: #cbd5e1;
+        transition: background-color 130ms ease;
+      }
+
+      .theme-switch-track::after {
+        content: "";
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 16px;
+        height: 16px;
+        border-radius: 999px;
+        background: #ffffff;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.28);
+        transition: transform 130ms ease;
+      }
+
+      .theme-switch input:checked + .theme-switch-track {
         background: #0f172a;
-        color: #f8fafc;
-        border-color: #0f172a;
+      }
+
+      .theme-switch input:checked + .theme-switch-track::after {
+        transform: translateX(16px);
+      }
+
+      .theme-switch:focus-within,
+      .menu-toggle:focus-visible,
+      .mobile-nav-link:focus-visible {
+        outline: 2px solid #94a3b8;
+        outline-offset: 2px;
+      }
+
+      html[data-theme="dark"] {
+        color-scheme: dark;
+      }
+
+      html[data-theme="dark"] body {
+        background-color: #020617 !important;
+        color: #e2e8f0 !important;
+      }
+
+      html[data-theme="dark"] .app-nav {
+        background: rgba(15, 23, 42, 0.88);
+        border-color: #334155;
+      }
+
+      html[data-theme="dark"] .menu-toggle,
+      html[data-theme="dark"] .mobile-nav-link,
+      html[data-theme="dark"] .theme-switch,
+      html[data-theme="dark"] .mobile-drawer {
+        background: #0f172a;
+        border-color: #334155;
+      }
+
+      html[data-theme="dark"] .menu-toggle-line {
+        background-color: #cbd5e1;
+      }
+
+      html[data-theme="dark"] .mobile-nav-link,
+      html[data-theme="dark"] .theme-switch-text {
+        color: #cbd5e1;
+      }
+
+      html[data-theme="dark"] .theme-switch-track {
+        background: #475569;
+      }
+
+      html[data-theme="dark"] .theme-switch input:checked + .theme-switch-track {
+        background: #e2e8f0;
+      }
+
+      html[data-theme="dark"] .theme-switch input:checked + .theme-switch-track::after {
+        background: #0f172a;
+      }
+
+      html[data-theme="dark"] .bg-white {
+        background-color: #0f172a !important;
+      }
+
+      html[data-theme="dark"] .bg-slate-50 {
+        background-color: #1e293b !important;
+      }
+
+      html[data-theme="dark"] .border-slate-200,
+      html[data-theme="dark"] .border-slate-300 {
+        border-color: #334155 !important;
+      }
+
+      html[data-theme="dark"] .text-slate-900 {
+        color: #f8fafc !important;
+      }
+
+      html[data-theme="dark"] .text-slate-700 {
+        color: #cbd5e1 !important;
+      }
+
+      html[data-theme="dark"] #stat-dem-seats {
+        color: #1f5fbd !important;
+      }
+
+      html[data-theme="dark"] #stat-rep-seats {
+        color: #c43333 !important;
+      }
+
+      html[data-theme="dark"] .text-slate-600,
+      html[data-theme="dark"] .text-slate-500 {
+        color: #94a3b8 !important;
+      }
+
+      html[data-theme="dark"] .hover\:bg-slate-50:hover {
+        background-color: #243244 !important;
+      }
+
+      html[data-theme="dark"] .hover\:bg-slate-100:hover {
+        background-color: #2b3a4f !important;
+      }
+
+      html[data-theme="dark"] .filter-chip.active,
+      html[data-theme="dark"] .filter-chip.active:hover,
+      html[data-theme="dark"] .filter-chip.active:active {
+        background: #e2e8f0;
+        color: #0f172a;
+        border-color: #38bdf8;
+        box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.45);
+      }
+
+      html[data-theme="dark"] .overlay-toggle {
+        background: #1e293b;
+        border-color: #475569;
+      }
+
+      html[data-theme="dark"] .overlay-toggle:hover {
+        background: #243244;
+      }
+
+      html[data-theme="dark"] .overlay-toggle-switch {
+        background: #475569;
+      }
+
+      html[data-theme="dark"] .overlay-toggle-label {
+        color: #ffffff;
+      }
+
+      html[data-theme="dark"] #map-tooltip {
+        background: #0f172a;
+        border-color: #475569;
+        color: #e2e8f0;
       }
 
       .top-stats-grid {
@@ -114,7 +393,7 @@
         font-size: 12px;
         line-height: 1.2;
         font-weight: 600;
-        color: #334155;
+        color: #000000;
       }
 
       .overlay-toggle-switch {
@@ -138,10 +417,6 @@
         background: #ffffff;
         box-shadow: 0 1px 2px rgba(15, 23, 42, 0.25);
         transition: transform 120ms ease;
-      }
-
-      .overlay-toggle input:checked ~ .overlay-toggle-label {
-        color: #0f172a;
       }
 
       .overlay-toggle input:checked ~ .overlay-toggle-switch {
@@ -195,18 +470,54 @@
     </style>
   </head>
   <body class="min-h-screen bg-slate-100 text-slate-900">
-    <main class="mx-auto max-w-[1500px] p-4 md:p-6 lg:p-8">
-      <header class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5 md:p-6">
-        <div>
-          <h1 class="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl md:text-3xl">
-            <span class="block">Florida Congressional Districts</span>
-            <span class="mt-0.5 block text-sm font-medium text-slate-600 sm:text-base md:text-lg">
-              U.S. House of Representatives Seats
-            </span>
-          </h1>
+    <nav class="app-nav">
+      <div class="mx-auto flex h-14 max-w-[1500px] items-center justify-between px-4 md:h-16 md:px-6 lg:px-8">
+        <a href="#overview-panel" class="text-sm font-semibold tracking-wide text-slate-900 sm:text-base">
+          Florida Congressional Districts
+        </a>
+
+        <div class="hidden items-center gap-3 md:flex">
+          <a
+            href="#map-panel"
+            class="inline-flex min-h-[38px] items-center rounded-md border border-slate-300 bg-white px-3 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+          >
+            Map
+          </a>
+          <label class="theme-switch min-w-[132px]">
+            <span class="theme-switch-text">Dark Mode</span>
+            <input id="theme-toggle-desktop" type="checkbox" aria-label="Toggle dark mode" />
+            <span class="theme-switch-track" aria-hidden="true"></span>
+          </label>
         </div>
 
-        <dl class="top-stats-grid mt-2.5 grid gap-1.5">
+        <button
+          id="menu-toggle"
+          class="menu-toggle md:hidden"
+          type="button"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          aria-label="Open menu"
+        >
+          <span class="menu-toggle-line"></span>
+          <span class="menu-toggle-line"></span>
+          <span class="menu-toggle-line"></span>
+        </button>
+      </div>
+    </nav>
+
+    <div id="mobile-menu-backdrop" class="menu-backdrop md:hidden"></div>
+    <aside id="mobile-menu" class="mobile-drawer md:hidden" aria-hidden="true">
+      <p class="px-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Menu</p>
+      <label class="theme-switch mt-1">
+        <span class="theme-switch-text">Dark Mode</span>
+        <input id="theme-toggle-mobile" type="checkbox" aria-label="Toggle dark mode" />
+        <span class="theme-switch-track" aria-hidden="true"></span>
+      </label>
+    </aside>
+
+    <main class="mx-auto max-w-[1500px] p-4 md:p-6 lg:p-8">
+      <header id="overview-panel" class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5 md:p-6">
+        <dl class="top-stats-grid mt-0 grid gap-1.5">
           <div
             data-stat-filter="all"
             role="button"
@@ -277,7 +588,7 @@
       </header>
 
       <div class="mt-3 sm:mt-4">
-        <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-5">
+        <section id="map-panel" class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-5">
           <div class="flex items-center justify-center">
             <div class="map-filter-grid mx-auto grid w-full max-w-4xl gap-2">
               <button
@@ -328,7 +639,7 @@
           <div id="map-view" class="mt-4">
             <div
               id="map-frame"
-              class="relative h-[62vh] min-h-[500px] overflow-hidden rounded-xl border border-slate-200 bg-slate-50"
+              class="relative h-[62vh] min-h-[500px] overflow-hidden rounded-xl border border-slate-200 bg-transparent"
             >
               <div id="map-viewport" class="absolute inset-0 grid place-items-center text-sm text-slate-500">
                 Loading map...
@@ -403,7 +714,9 @@
         R: "#c43333",
         OTHER: "#b45309",
       };
-      const MAP_BACKGROUND_FILL = "#f8fafc";
+      const MAP_BACKGROUND_FILL = "transparent";
+      const FILTERED_OUT_FILL_LIGHT = "#dbe3ee";
+      const FILTERED_OUT_FILL_DARK = "#334155";
       const MAP_OVERLAY_COLOR = "#cbd5e1";
       const MAP_MIN_ZOOM = 0.8;
       const MAP_MAX_ZOOM = 11;
@@ -414,6 +727,7 @@
       const TAP_MAX_DURATION_MS = 450;
       const ZOOM_EPSILON = 0.001;
       const PAN_EPSILON = 0.5;
+      const THEME_STORAGE_KEY = "fl-map-theme";
 
       const app = {
         data: null,
@@ -441,6 +755,8 @@
           countyNames: null,
         },
         suppressMapClickUntil: 0,
+        mobileMenuOpen: false,
+        theme: "light",
       };
 
       const els = {
@@ -466,11 +782,17 @@
         toggleDistrictNumbers: document.getElementById("toggle-district-numbers"),
         toggleCountyLines: document.getElementById("toggle-county-lines"),
         toggleCountyNames: document.getElementById("toggle-county-names"),
+        menuToggle: document.getElementById("menu-toggle"),
+        mobileMenu: document.getElementById("mobile-menu"),
+        mobileMenuBackdrop: document.getElementById("mobile-menu-backdrop"),
+        themeToggleDesktop: document.getElementById("theme-toggle-desktop"),
+        themeToggleMobile: document.getElementById("theme-toggle-mobile"),
       };
 
       init();
 
       async function init() {
+        wireNavbarControls();
         wireStaticControls();
         wirePageZoomGuards();
         syncLegendColors();
@@ -496,6 +818,109 @@
             "Could not load local files. Serve this folder over HTTP (for example: `python -m http.server`) and reload.";
           showMapMessage(message, true);
           console.error(error);
+        }
+      }
+
+      function wireNavbarControls() {
+        setTheme(getPreferredTheme());
+
+        [els.themeToggleDesktop, els.themeToggleMobile].forEach((toggle) => {
+          if (!toggle) {
+            return;
+          }
+          toggle.addEventListener("change", (event) => {
+            setTheme(event.target.checked ? "dark" : "light");
+          });
+        });
+
+        if (els.menuToggle) {
+          els.menuToggle.addEventListener("click", () => {
+            setMobileMenuOpen(!app.mobileMenuOpen);
+          });
+        }
+        if (els.mobileMenuBackdrop) {
+          els.mobileMenuBackdrop.addEventListener("click", () => setMobileMenuOpen(false));
+        }
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && app.mobileMenuOpen) {
+            setMobileMenuOpen(false);
+          }
+        });
+
+        if (window.matchMedia) {
+          const menuMediaQuery = window.matchMedia("(min-width: 768px)");
+          const onMenuMediaChange = (event) => {
+            if (event.matches) {
+              setMobileMenuOpen(false);
+            }
+          };
+          if (typeof menuMediaQuery.addEventListener === "function") {
+            menuMediaQuery.addEventListener("change", onMenuMediaChange);
+          } else if (typeof menuMediaQuery.addListener === "function") {
+            menuMediaQuery.addListener(onMenuMediaChange);
+          }
+        }
+      }
+
+      function setMobileMenuOpen(isOpen) {
+        const nextOpen = Boolean(isOpen);
+        app.mobileMenuOpen = nextOpen;
+
+        if (els.mobileMenu) {
+          els.mobileMenu.classList.toggle("is-open", nextOpen);
+          els.mobileMenu.setAttribute("aria-hidden", String(!nextOpen));
+        }
+        if (els.mobileMenuBackdrop) {
+          els.mobileMenuBackdrop.classList.toggle("is-open", nextOpen);
+        }
+        if (els.menuToggle) {
+          els.menuToggle.classList.toggle("is-open", nextOpen);
+          els.menuToggle.setAttribute("aria-expanded", String(nextOpen));
+          els.menuToggle.setAttribute("aria-label", nextOpen ? "Close menu" : "Open menu");
+        }
+
+        document.body.style.overflow = nextOpen ? "hidden" : "";
+      }
+
+      function getPreferredTheme() {
+        const storedTheme = readStoredTheme();
+        if (storedTheme) {
+          return storedTheme;
+        }
+        return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+
+      function readStoredTheme() {
+        try {
+          const stored = localStorage.getItem(THEME_STORAGE_KEY);
+          return stored === "dark" || stored === "light" ? stored : null;
+        } catch {
+          return null;
+        }
+      }
+
+      function setTheme(theme) {
+        const nextTheme = theme === "dark" ? "dark" : "light";
+        app.theme = nextTheme;
+        document.documentElement.setAttribute("data-theme", nextTheme);
+        document.documentElement.style.colorScheme = nextTheme;
+
+        const isDark = nextTheme === "dark";
+        [els.themeToggleDesktop, els.themeToggleMobile].forEach((toggle) => {
+          if (toggle) {
+            toggle.checked = isDark;
+          }
+        });
+
+        try {
+          localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+        } catch {
+          // ignore storage write failures
+        }
+
+        if (app.data) {
+          paintDistricts();
+          renderSelectedDistrict();
         }
       }
 
@@ -1117,13 +1542,13 @@
 
         els.candidateLists.innerHTML = "";
         els.candidateLists.appendChild(
-          buildCandidateSection("Democratic", district.candidates.democratic, "bg-blue-50 border-blue-200")
+          buildCandidateSection("Democratic", district.candidates.democratic, "D")
         );
         els.candidateLists.appendChild(
-          buildCandidateSection("Republican", district.candidates.republican, "bg-red-50 border-red-200")
+          buildCandidateSection("Republican", district.candidates.republican, "R")
         );
         els.candidateLists.appendChild(
-          buildCandidateSection("Other", district.candidates.other, "bg-amber-50 border-amber-200")
+          buildCandidateSection("Other", district.candidates.other, "OTHER")
         );
       }
 
@@ -1149,18 +1574,24 @@
         hideTooltip();
       }
 
-      function buildCandidateSection(title, candidates, classes) {
+      function buildCandidateSection(title, candidates, partyKey) {
         const section = document.createElement("section");
-        section.className = `rounded-xl border p-3 ${classes}`;
+        section.className = "rounded-xl border p-3";
+
+        const style = getCandidateSectionStyle(partyKey);
+        section.style.backgroundColor = style.bg;
+        section.style.borderColor = style.border;
 
         const heading = document.createElement("h4");
-        heading.className = "text-sm font-semibold text-slate-800";
+        heading.className = "text-sm font-semibold";
+        heading.style.color = style.heading;
         heading.textContent = `${title} Candidates`;
         section.appendChild(heading);
 
         if (!candidates.length) {
           const empty = document.createElement("p");
-          empty.className = "mt-1 text-sm text-slate-600";
+          empty.className = "mt-1 text-sm";
+          empty.style.color = style.text;
           empty.textContent = "No candidates listed.";
           section.appendChild(empty);
           return section;
@@ -1175,7 +1606,9 @@
 
         sortedCandidates.forEach((candidate) => {
           const item = document.createElement("li");
-          item.className = "rounded-md bg-white/80 px-2 py-1 text-sm text-slate-700";
+          item.className = "rounded-md px-2 py-1 text-sm";
+          item.style.backgroundColor = style.itemBg;
+          item.style.color = style.itemText;
           item.textContent = `${candidate.name} (${candidate.party})`;
           list.appendChild(item);
         });
@@ -1197,8 +1630,8 @@
         els.mapTooltip.innerHTML = `
           <p class="font-semibold text-slate-900">District ${district.district}</p>
           <div class="mt-2 rounded-md border p-2" style="background-color: ${seatHolderStyle.bg}; border-color: ${seatHolderStyle.border};">
-            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Current Seat Holder</p>
-            <p class="mt-1 text-slate-700">
+            <p class="text-[11px] font-semibold uppercase tracking-wide" style="color: ${seatHolderStyle.label};">Current Seat Holder</p>
+            <p class="mt-1" style="color: ${seatHolderStyle.text};">
               ${escapeHtml(district.current_holder.name)} (${escapeHtml(district.current_holder.party)})
             </p>
           </div>
@@ -1249,17 +1682,102 @@
         const style = getSeatHolderCardStyle(district);
         element.style.backgroundColor = style.bg;
         element.style.borderColor = style.border;
+
+        const label = element.querySelector("h3");
+        if (label) {
+          label.style.color = style.label;
+        }
+
+        const value = element.querySelector("p");
+        if (value) {
+          value.style.color = style.text;
+        }
       }
 
       function getSeatHolderCardStyle(district) {
+        const isDark = app.theme === "dark";
+        if (!district) {
+          return isDark
+            ? { bg: "#1e293b", border: "#475569", label: "#cbd5e1", text: "#e2e8f0" }
+            : { bg: "#f8fafc", border: "#cbd5e1", label: "#475569", text: "#334155" };
+        }
+
         const party = getPartyKey(district);
         if (party === "D") {
-          return { bg: "#dbeafe", border: "#60a5fa" };
+          return isDark
+            ? { bg: "#172554", border: "#1d4ed8", label: "#bfdbfe", text: "#dbeafe" }
+            : { bg: "#dbeafe", border: "#60a5fa", label: "#1e3a8a", text: "#1e40af" };
         }
         if (party === "R") {
-          return { bg: "#fee2e2", border: "#f87171" };
+          return isDark
+            ? { bg: "#450a0a", border: "#b91c1c", label: "#fecaca", text: "#fee2e2" }
+            : { bg: "#fee2e2", border: "#f87171", label: "#991b1b", text: "#b91c1c" };
         }
-        return { bg: "#fef3c7", border: "#fbbf24" };
+        return isDark
+          ? { bg: "#451a03", border: "#d97706", label: "#fde68a", text: "#fef3c7" }
+          : { bg: "#fef3c7", border: "#fbbf24", label: "#92400e", text: "#a16207" };
+      }
+
+      function getCandidateSectionStyle(partyKey) {
+        const isDark = app.theme === "dark";
+
+        if (partyKey === "D") {
+          return isDark
+            ? {
+                bg: "#172554",
+                border: "#1d4ed8",
+                heading: "#bfdbfe",
+                text: "#dbeafe",
+                itemBg: "#1e3a8a",
+                itemText: "#dbeafe",
+              }
+            : {
+                bg: "#eff6ff",
+                border: "#bfdbfe",
+                heading: "#1e3a8a",
+                text: "#1e40af",
+                itemBg: "rgba(255, 255, 255, 0.85)",
+                itemText: "#334155",
+              };
+        }
+
+        if (partyKey === "R") {
+          return isDark
+            ? {
+                bg: "#450a0a",
+                border: "#b91c1c",
+                heading: "#fecaca",
+                text: "#fee2e2",
+                itemBg: "#7f1d1d",
+                itemText: "#fee2e2",
+              }
+            : {
+                bg: "#fef2f2",
+                border: "#fecaca",
+                heading: "#991b1b",
+                text: "#b91c1c",
+                itemBg: "rgba(255, 255, 255, 0.85)",
+                itemText: "#334155",
+              };
+        }
+
+        return isDark
+          ? {
+              bg: "#451a03",
+              border: "#d97706",
+              heading: "#fde68a",
+              text: "#fef3c7",
+              itemBg: "#78350f",
+              itemText: "#fef3c7",
+            }
+          : {
+              bg: "#fffbeb",
+              border: "#fde68a",
+              heading: "#92400e",
+              text: "#a16207",
+              itemBg: "rgba(255, 255, 255, 0.85)",
+              itemText: "#334155",
+            };
       }
 
       function getDistrictColor(district) {
@@ -1268,7 +1786,7 @@
       }
 
       function getFilteredOutColor() {
-        return MAP_BACKGROUND_FILL;
+        return app.theme === "dark" ? FILTERED_OUT_FILL_DARK : FILTERED_OUT_FILL_LIGHT;
       }
 
       function matchesFilter(district) {
