@@ -319,8 +319,8 @@
       }
 
       html[data-theme="dark"] .mode-select-button {
-        background: #1e293b;
-        border-color: #475569;
+        background: #0f172a;
+        border-color: #334155;
         color: #cbd5e1;
       }
 
@@ -333,32 +333,6 @@
         color: #0f172a;
         border-color: #38bdf8;
         box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.45);
-      }
-
-      html[data-theme="dark"] .mobile-shading-panel {
-        background: #1e293b;
-        border-color: #475569;
-      }
-
-      html[data-theme="dark"] .mobile-shading-title,
-      html[data-theme="dark"] .mobile-color-label,
-      html[data-theme="dark"] .mobile-pvi-row-label {
-        color: #e2e8f0;
-      }
-
-      html[data-theme="dark"] .mobile-shading-subtitle,
-      html[data-theme="dark"] .mobile-shading-group-label,
-      html[data-theme="dark"] .mobile-pvi-head {
-        color: #94a3b8;
-      }
-
-      html[data-theme="dark"] .mobile-color-input {
-        background: #0f172a;
-        border-color: #475569;
-      }
-
-      html[data-theme="dark"] .mobile-pvi-grid-wrap {
-        border-top-color: #334155;
       }
 
       html[data-theme="dark"] #map-tooltip {
@@ -409,7 +383,7 @@
         min-height: 44px;
         border: 1px solid #cbd5e1;
         border-radius: 0.65rem;
-        background: #f8fafc;
+        background: #ffffff;
         color: #334155;
         font-size: 12px;
         font-weight: 600;
@@ -419,7 +393,7 @@
       }
 
       .mode-select-button:hover {
-        background: #f1f5f9;
+        background: #f8fafc;
       }
 
       .mode-select-button:focus-visible {
@@ -505,123 +479,6 @@
         transform: translateX(14px);
       }
 
-      .mobile-shading-panel {
-        border: 1px solid #cbd5e1;
-        border-radius: 0.8rem;
-        background: #f8fafc;
-        padding: 0.7rem;
-      }
-
-      .mobile-shading-title {
-        font-size: 0.78rem;
-        font-weight: 700;
-        letter-spacing: 0.03em;
-        color: #334155;
-      }
-
-      .mobile-shading-subtitle {
-        margin-top: 0.2rem;
-        font-size: 0.68rem;
-        line-height: 1.3;
-        color: #64748b;
-      }
-
-      .mobile-shading-group-label {
-        margin-top: 0.65rem;
-        margin-bottom: 0.4rem;
-        font-size: 0.65rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        color: #64748b;
-      }
-
-      .mobile-incumbent-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 0.45rem;
-      }
-
-      .mobile-color-control {
-        display: flex;
-        flex-direction: column;
-        gap: 0.3rem;
-      }
-
-      .mobile-color-label {
-        font-size: 0.7rem;
-        font-weight: 600;
-        color: #334155;
-      }
-
-      .mobile-color-input {
-        min-width: 0;
-        width: 100%;
-        height: 34px;
-        border: 1px solid #cbd5e1;
-        border-radius: 0.55rem;
-        padding: 0.12rem;
-        background: #ffffff;
-        cursor: pointer;
-      }
-
-      .mobile-color-input::-webkit-color-swatch-wrapper {
-        padding: 0;
-      }
-
-      .mobile-color-input::-webkit-color-swatch {
-        border: none;
-        border-radius: 0.38rem;
-      }
-
-      .mobile-color-input::-moz-color-swatch {
-        border: none;
-        border-radius: 0.38rem;
-      }
-
-      .mobile-color-input:focus-visible {
-        outline: 2px solid #94a3b8;
-        outline-offset: 2px;
-      }
-
-      .mobile-pvi-grid-wrap {
-        margin-top: 0.7rem;
-        padding-top: 0.7rem;
-        border-top: 1px solid #e2e8f0;
-      }
-
-      .mobile-pvi-head,
-      .mobile-pvi-row {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 44px 44px;
-        align-items: center;
-        gap: 0.45rem;
-      }
-
-      .mobile-pvi-head {
-        padding-bottom: 0.35rem;
-        font-size: 0.62rem;
-        font-weight: 700;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: #64748b;
-      }
-
-      .mobile-pvi-row + .mobile-pvi-row {
-        margin-top: 0.35rem;
-      }
-
-      .mobile-pvi-row-label {
-        font-size: 0.72rem;
-        font-weight: 600;
-        color: #334155;
-      }
-
-      .mobile-pvi-input {
-        height: 28px;
-        padding: 0.09rem;
-      }
-
       @media (max-width: 960px) {
         .map-filter-grid {
           grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -654,10 +511,6 @@
 
       @media (max-width: 359px) {
         .top-stats-grid {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .mobile-incumbent-grid {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
@@ -702,209 +555,6 @@
         <input id="theme-toggle-mobile" type="checkbox" aria-label="Toggle dark mode" />
         <span class="theme-switch-track" aria-hidden="true"></span>
       </label>
-      <section class="mobile-shading-panel" aria-labelledby="mobile-shading-title">
-        <h2 id="mobile-shading-title" class="mobile-shading-title">Shading Colors</h2>
-        <p class="mobile-shading-subtitle">Customize Incumbent and Cook PVI district colors.</p>
-
-        <p class="mobile-shading-group-label">Incumbent</p>
-        <div class="mobile-incumbent-grid">
-          <label class="mobile-color-control">
-            <span class="mobile-color-label">D</span>
-            <input
-              type="color"
-              class="mobile-color-input"
-              data-shading-color
-              data-color-type="incumbent"
-              data-party="D"
-              aria-label="Incumbent Democratic color"
-            />
-          </label>
-          <label class="mobile-color-control">
-            <span class="mobile-color-label">R</span>
-            <input
-              type="color"
-              class="mobile-color-input"
-              data-shading-color
-              data-color-type="incumbent"
-              data-party="R"
-              aria-label="Incumbent Republican color"
-            />
-          </label>
-          <label class="mobile-color-control">
-            <span class="mobile-color-label">Other</span>
-            <input
-              type="color"
-              class="mobile-color-input"
-              data-shading-color
-              data-color-type="incumbent"
-              data-party="OTHER"
-              aria-label="Incumbent other or unknown color"
-            />
-          </label>
-        </div>
-
-        <div class="mobile-pvi-grid-wrap">
-          <div class="mobile-pvi-head">
-            <span>Cook PVI Margin</span>
-            <span>D</span>
-            <span>R</span>
-          </div>
-
-          <label class="mobile-pvi-row">
-            <span class="mobile-pvi-row-label">20+</span>
-            <input
-              type="color"
-              class="mobile-color-input mobile-pvi-input"
-              data-shading-color
-              data-color-type="pvi-stop"
-              data-stop-index="0"
-              data-party="D"
-              aria-label="Cook PVI Democratic color for margin 20 or higher"
-            />
-            <input
-              type="color"
-              class="mobile-color-input mobile-pvi-input"
-              data-shading-color
-              data-color-type="pvi-stop"
-              data-stop-index="0"
-              data-party="R"
-              aria-label="Cook PVI Republican color for margin 20 or higher"
-            />
-          </label>
-
-          <label class="mobile-pvi-row">
-            <span class="mobile-pvi-row-label">17-19</span>
-            <input
-              type="color"
-              class="mobile-color-input mobile-pvi-input"
-              data-shading-color
-              data-color-type="pvi-stop"
-              data-stop-index="1"
-              data-party="D"
-              aria-label="Cook PVI Democratic color for margins 17 to 19"
-            />
-            <input
-              type="color"
-              class="mobile-color-input mobile-pvi-input"
-              data-shading-color
-              data-color-type="pvi-stop"
-              data-stop-index="1"
-              data-party="R"
-              aria-label="Cook PVI Republican color for margins 17 to 19"
-            />
-          </label>
-
-          <label class="mobile-pvi-row">
-            <span class="mobile-pvi-row-label">14-16</span>
-            <input
-              type="color"
-              class="mobile-color-input mobile-pvi-input"
-              data-shading-color
-              data-color-type="pvi-stop"
-              data-stop-index="2"
-              data-party="D"
-              aria-label="Cook PVI Democratic color for margins 14 to 16"
-            />
-            <input
-              type="color"
-              class="mobile-color-input mobile-pvi-input"
-              data-shading-color
-              data-color-type="pvi-stop"
-              data-stop-index="2"
-              data-party="R"
-              aria-label="Cook PVI Republican color for margins 14 to 16"
-            />
-          </label>
-
-          <label class="mobile-pvi-row">
-            <span class="mobile-pvi-row-label">11-13</span>
-            <input
-              type="color"
-              class="mobile-color-input mobile-pvi-input"
-              data-shading-color
-              data-color-type="pvi-stop"
-              data-stop-index="3"
-              data-party="D"
-              aria-label="Cook PVI Democratic color for margins 11 to 13"
-            />
-            <input
-              type="color"
-              class="mobile-color-input mobile-pvi-input"
-              data-shading-color
-              data-color-type="pvi-stop"
-              data-stop-index="3"
-              data-party="R"
-              aria-label="Cook PVI Republican color for margins 11 to 13"
-            />
-          </label>
-
-          <label class="mobile-pvi-row">
-            <span class="mobile-pvi-row-label">8-10</span>
-            <input
-              type="color"
-              class="mobile-color-input mobile-pvi-input"
-              data-shading-color
-              data-color-type="pvi-stop"
-              data-stop-index="4"
-              data-party="D"
-              aria-label="Cook PVI Democratic color for margins 8 to 10"
-            />
-            <input
-              type="color"
-              class="mobile-color-input mobile-pvi-input"
-              data-shading-color
-              data-color-type="pvi-stop"
-              data-stop-index="4"
-              data-party="R"
-              aria-label="Cook PVI Republican color for margins 8 to 10"
-            />
-          </label>
-
-          <label class="mobile-pvi-row">
-            <span class="mobile-pvi-row-label">5-7</span>
-            <input
-              type="color"
-              class="mobile-color-input mobile-pvi-input"
-              data-shading-color
-              data-color-type="pvi-stop"
-              data-stop-index="5"
-              data-party="D"
-              aria-label="Cook PVI Democratic color for margins 5 to 7"
-            />
-            <input
-              type="color"
-              class="mobile-color-input mobile-pvi-input"
-              data-shading-color
-              data-color-type="pvi-stop"
-              data-stop-index="5"
-              data-party="R"
-              aria-label="Cook PVI Republican color for margins 5 to 7"
-            />
-          </label>
-
-          <label class="mobile-pvi-row">
-            <span class="mobile-pvi-row-label">0-4</span>
-            <input
-              type="color"
-              class="mobile-color-input mobile-pvi-input"
-              data-shading-color
-              data-color-type="pvi-stop"
-              data-stop-index="6"
-              data-party="D"
-              aria-label="Cook PVI Democratic color for margins 0 to 4"
-            />
-            <input
-              type="color"
-              class="mobile-color-input mobile-pvi-input"
-              data-shading-color
-              data-color-type="pvi-stop"
-              data-stop-index="6"
-              data-party="R"
-              aria-label="Cook PVI Republican color for margins 0 to 4"
-            />
-          </label>
-        </div>
-      </section>
     </aside>
 
     <main class="mx-auto max-w-[1500px] p-4 md:p-6 lg:p-8">
@@ -981,54 +631,7 @@
 
       <div class="mt-3 sm:mt-4">
         <section id="map-panel" class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-5">
-          <div class="flex items-center justify-center">
-            <div class="map-filter-grid mx-auto grid w-full max-w-4xl gap-2">
-              <button
-                type="button"
-                data-filter="all"
-                class="filter-chip map-filter-chip active inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-              >
-                All Districts
-              </button>
-              <button
-                type="button"
-                data-filter="D"
-                class="filter-chip map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-              >
-                D-Held
-              </button>
-              <button
-                type="button"
-                data-filter="R"
-                class="filter-chip map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-              >
-                R-Held
-              </button>
-              <button
-                type="button"
-                data-filter="noD"
-                class="filter-chip map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-              >
-                No D-Candidates
-              </button>
-              <button
-                type="button"
-                data-filter="noR"
-                class="filter-chip map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-              >
-                No R-Candidates
-              </button>
-              <button
-                id="reset-view"
-                type="button"
-                class="map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-              >
-                Recenter View
-              </button>
-            </div>
-          </div>
-
-          <div id="map-view" class="mt-4">
+          <div id="map-view">
             <div
               id="map-frame"
               class="relative h-[62vh] min-h-[500px] overflow-hidden rounded-xl border border-slate-200 bg-transparent"
@@ -1055,6 +658,54 @@
                 <span id="legend-dot-other" class="h-2.5 w-2.5 rounded-full"></span>
                 <span id="legend-label-other">Other/Unknown</span>
               </span>
+            </div>
+
+            <div class="mt-3 border-t border-slate-200 pt-3">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Filters</p>
+              <div class="map-filter-grid mt-2 grid gap-2">
+                <button
+                  type="button"
+                  data-filter="all"
+                  class="filter-chip map-filter-chip active inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+                >
+                  All Districts
+                </button>
+                <button
+                  type="button"
+                  data-filter="D"
+                  class="filter-chip map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+                >
+                  D-Held
+                </button>
+                <button
+                  type="button"
+                  data-filter="R"
+                  class="filter-chip map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+                >
+                  R-Held
+                </button>
+                <button
+                  type="button"
+                  data-filter="noD"
+                  class="filter-chip map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+                >
+                  No D-Candidates
+                </button>
+                <button
+                  type="button"
+                  data-filter="noR"
+                  class="filter-chip map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+                >
+                  No R-Candidates
+                </button>
+                <button
+                  id="reset-view"
+                  type="button"
+                  class="map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+                >
+                  Recenter View
+                </button>
+              </div>
             </div>
 
             <div class="mt-3 border-t border-slate-200 pt-3">
@@ -1156,8 +807,8 @@
       const MAP_BACKGROUND_FILL = "transparent";
       const FILTERED_OUT_FILL_LIGHT = "#dbe3ee";
       const FILTERED_OUT_FILL_DARK = "#334155";
-      const MAP_COUNTY_BORDERS_COLOR = "#334155";
-      const MAP_COUNTY_BORDERS_OPACITY = "0.2";
+      const MAP_COUNTY_BORDERS_COLOR = "#ffffff";
+      const MAP_COUNTY_BORDERS_OPACITY = "0.3";
       const MAP_OVERLAY_COLOR = "#cbd5e1";
       const MAP_MIN_ZOOM = 0.8;
       const MAP_MAX_ZOOM = 11;
@@ -1235,7 +886,6 @@
         mobileMenu: document.getElementById("mobile-menu"),
         mobileMenuBackdrop: document.getElementById("mobile-menu-backdrop"),
         themeToggleMobile: document.getElementById("theme-toggle-mobile"),
-        shadingColorInputs: Array.from(document.querySelectorAll("[data-shading-color]")),
         selectedPviCard: document.getElementById("selected-pvi-card"),
         selectedPvi: document.getElementById("selected-pvi"),
       };
@@ -1245,7 +895,6 @@
       async function init() {
         wireNavbarControls();
         wireStaticControls();
-        wireShadingColorControls();
         wirePageZoomGuards();
         syncLegendColors();
         syncMapColorModeControls();
@@ -1370,124 +1019,6 @@
         syncMapColorModeControls();
         syncLegendColors();
         paintDistricts();
-      }
-
-      function wireShadingColorControls() {
-        if (!els.shadingColorInputs.length) {
-          return;
-        }
-
-        PVI_LEGEND_COLOR.EVEN = DISTRICT_FILL_DARK_BY_PARTY.OTHER;
-        syncShadingColorInputs();
-
-        els.shadingColorInputs.forEach((input) => {
-          const applyColorChange = () => {
-            const nextColor = normalizePickerHexColor(input.value);
-            if (!nextColor) {
-              syncShadingColorInputs();
-              return;
-            }
-            const didUpdate = setShadingColorFromInput(input, nextColor);
-            if (!didUpdate) {
-              syncShadingColorInputs();
-              return;
-            }
-
-            syncShadingColorInputs();
-            syncLegendColors();
-            if (app.data) {
-              paintDistricts();
-            }
-          };
-
-          input.addEventListener("input", applyColorChange);
-          input.addEventListener("change", applyColorChange);
-        });
-      }
-
-      function syncShadingColorInputs() {
-        if (!els.shadingColorInputs.length) {
-          return;
-        }
-
-        els.shadingColorInputs.forEach((input) => {
-          const currentColor = getShadingColorForInput(input);
-          const pickerColor = toHexColorString(currentColor);
-          if (!pickerColor) {
-            return;
-          }
-          input.value = pickerColor;
-        });
-      }
-
-      function getShadingColorForInput(input) {
-        const colorType = input.dataset.colorType;
-        if (colorType === "incumbent") {
-          const partyKey = input.dataset.party;
-          return partyKey && partyKey in DISTRICT_FILL_DARK_BY_PARTY ? DISTRICT_FILL_DARK_BY_PARTY[partyKey] : null;
-        }
-
-        if (colorType === "pvi-stop") {
-          const stopIndex = Number(input.dataset.stopIndex);
-          const partyKey = input.dataset.party;
-          const stop = Number.isInteger(stopIndex) ? PVI_COLOR_STOPS[stopIndex] : null;
-          if (!stop || (partyKey !== "D" && partyKey !== "R")) {
-            return null;
-          }
-          return stop[partyKey];
-        }
-
-        return null;
-      }
-
-      function setShadingColorFromInput(input, colorValue) {
-        const colorType = input.dataset.colorType;
-        if (colorType === "incumbent") {
-          const partyKey = input.dataset.party;
-          if (!partyKey || !(partyKey in DISTRICT_FILL_DARK_BY_PARTY)) {
-            return false;
-          }
-          DISTRICT_FILL_DARK_BY_PARTY[partyKey] = colorValue;
-          if (partyKey === "OTHER") {
-            PVI_LEGEND_COLOR.EVEN = colorValue;
-          }
-          return true;
-        }
-
-        if (colorType === "pvi-stop") {
-          const stopIndex = Number(input.dataset.stopIndex);
-          const partyKey = input.dataset.party;
-          const stop = Number.isInteger(stopIndex) ? PVI_COLOR_STOPS[stopIndex] : null;
-          if (!stop || (partyKey !== "D" && partyKey !== "R")) {
-            return false;
-          }
-          stop[partyKey] = colorValue;
-          return true;
-        }
-
-        return false;
-      }
-
-      function normalizePickerHexColor(value) {
-        if (typeof value !== "string") {
-          return null;
-        }
-        const match = value.trim().match(/^#([0-9a-f]{6})$/i);
-        return match ? `#${match[1].toUpperCase()}` : null;
-      }
-
-      function toHexColorString(colorValue) {
-        const normalizedHex = normalizePickerHexColor(colorValue);
-        if (normalizedHex) {
-          return normalizedHex.toLowerCase();
-        }
-
-        const rgb = parseColorToRgb(colorValue);
-        if (!rgb) {
-          return null;
-        }
-        const toHex = (channel) => clampRgbChannel(channel).toString(16).padStart(2, "0");
-        return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
       }
 
       function getPviLegendColors() {
