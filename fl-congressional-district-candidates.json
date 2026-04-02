@@ -6,510 +6,1238 @@
   "districts": [
     {
       "district": 1,
-      "current_holder": { "name": "Jimmy Patronis", "party": "R" },
+      "current_holder": {
+        "name": "Jimmy Patronis",
+        "party": "R"
+      },
       "cook_pvi_2025": "R+18",
       "candidates": {
         "democratic": [
-          { "name": "Jennifer Gay Valimont", "party": "D" }
+          {
+            "name": "Jennifer Gay Valimont",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Cedric Lorenzo Alexander", "party": "R" },
-          { "name": "Douglas Connor Chico", "party": "R" },
-          { "name": "John Frankman", "party": "R" },
-          { "name": "Jimmy Patronis Jr.", "party": "R" }
+          {
+            "name": "Cedric Lorenzo Alexander",
+            "party": "R"
+          },
+          {
+            "name": "Douglas Connor Chico",
+            "party": "R"
+          },
+          {
+            "name": "John Frankman",
+            "party": "R"
+          },
+          {
+            "name": "Jimmy Patronis Jr.",
+            "party": "R"
+          },
+          {
+            "name": "Gavin Solomon",
+            "party": "R"
+          }
         ],
         "other": [
-          { "name": "Tyler L. Davis", "party": "NPA" }
+          {
+            "name": "Tyler L. Davis",
+            "party": "NPA"
+          }
         ]
       }
     },
     {
       "district": 2,
-      "current_holder": { "name": "Neal P. Dunn", "party": "R" },
+      "current_holder": {
+        "name": "Neal P. Dunn",
+        "party": "R"
+      },
       "cook_pvi_2025": "R+8",
       "candidates": {
         "democratic": [
-          { "name": "Huy-Yen Cam Bailey", "party": "D" },
-          { "name": "Amanda Marie Green", "party": "D" },
-          { "name": "Nicholas Zateslo", "party": "D" }
+          {
+            "name": "Huy-Yen Cam Bailey",
+            "party": "D"
+          },
+          {
+            "name": "Amanda Marie Green",
+            "party": "D"
+          },
+          {
+            "name": "Nicholas Zateslo",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Neal Patrick Dunn", "party": "R" },
-          { "name": "Keith Gross", "party": "R" },
-          { "name": "Nick Justin Lewis", "party": "R" },
-          { "name": "Jim Norton", "party": "R" },
-          { "name": "Evan Power", "party": "R" },
-          { "name": "Austin Rogers", "party": "R" },
-          { "name": "Audie Rowell", "party": "R" }
+          {
+            "name": "Neal Patrick Dunn",
+            "party": "R"
+          },
+          {
+            "name": "Keith Gross",
+            "party": "R"
+          },
+          {
+            "name": "Nick Justin Lewis",
+            "party": "R"
+          },
+          {
+            "name": "Jim Norton",
+            "party": "R"
+          },
+          {
+            "name": "Evan Power",
+            "party": "R"
+          },
+          {
+            "name": "Austin Rogers",
+            "party": "R"
+          },
+          {
+            "name": "Audie Rowell",
+            "party": "R"
+          },
+          {
+            "name": "Luke Murphy",
+            "party": "R"
+          }
         ],
         "other": []
       }
     },
     {
       "district": 3,
-      "current_holder": { "name": "Kat Cammack", "party": "R" },
+      "current_holder": {
+        "name": "Kat Cammack",
+        "party": "R"
+      },
       "cook_pvi_2025": "R+10",
       "candidates": {
         "democratic": [
-          { "name": "Rock Aboujaoude Jr.", "party": "D" },
-          { "name": "Troy Albers", "party": "D" },
-          { "name": "Seth Harp", "party": "D" },
-          { "name": "George Emil Hubac", "party": "D" },
-          { "name": "Tom B. Wells", "party": "D" }
+          {
+            "name": "Rock Aboujaoude Jr.",
+            "party": "D"
+          },
+          {
+            "name": "Troy Albers",
+            "party": "D"
+          },
+          {
+            "name": "Seth Harp",
+            "party": "D"
+          },
+          {
+            "name": "George Emil Hubac",
+            "party": "D"
+          },
+          {
+            "name": "Tom B. Wells",
+            "party": "D"
+          }
         ],
-        "republican": [],
+        "republican": [
+          {
+            "name": "Kat Cammack",
+            "party": "R"
+          }
+        ],
         "other": [
-          { "name": "Joseph Drury Van Vactor Jr.", "party": "NPA" },
-          { "name": "Angela T. Wiman", "party": "NPA" }
+          {
+            "name": "Joseph Drury Van Vactor Jr.",
+            "party": "NPA"
+          },
+          {
+            "name": "Angela T. Wiman",
+            "party": "NPA"
+          }
         ]
       }
     },
     {
       "district": 4,
-      "current_holder": { "name": "Aaron Bean", "party": "R" },
+      "current_holder": {
+        "name": "Aaron Bean",
+        "party": "R"
+      },
       "cook_pvi_2025": "R+5",
       "candidates": {
         "democratic": [
-          { "name": "LaShonda \"L.J.\" Holloway", "party": "D" },
-          { "name": "Michael Kirwan", "party": "D" },
-          { "name": "Ricky Patric Knoles", "party": "D" },
-          { "name": "Brittney Robinson", "party": "D" }
+          {
+            "name": "LaShonda \"L.J.\" Holloway",
+            "party": "D"
+          },
+          {
+            "name": "Michael Kirwan",
+            "party": "D"
+          },
+          {
+            "name": "Ricky Patric Knoles",
+            "party": "D"
+          },
+          {
+            "name": "Brittney Robinson",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Aaron P. Bean", "party": "R" }
+          {
+            "name": "Aaron P. Bean",
+            "party": "R"
+          },
+          {
+            "name": "Anthony Valerio",
+            "party": "R"
+          }
         ],
         "other": [
-          { "name": "Todd Schaefer", "party": "NPA" },
-          { "name": "Ronald Edgar Sherard III", "party": "NPA" }
+          {
+            "name": "Todd Schaefer",
+            "party": "NPA"
+          },
+          {
+            "name": "Ronald Edgar Sherard III",
+            "party": "NPA"
+          }
         ]
       }
     },
     {
       "district": 5,
-      "current_holder": { "name": "John H. Rutherford", "party": "R" },
+      "current_holder": {
+        "name": "John H. Rutherford",
+        "party": "R"
+      },
       "cook_pvi_2025": "R+10",
       "candidates": {
         "democratic": [
-          { "name": "Rachel Grage", "party": "D" },
-          { "name": "Alexander Hazen", "party": "D" },
-          { "name": "Mark Heggestad", "party": "D" },
-          { "name": "Eli Johnson", "party": "D" },
-          { "name": "John B. Todd", "party": "D" }
+          {
+            "name": "Rachel Grage",
+            "party": "D"
+          },
+          {
+            "name": "Alexander Hazen",
+            "party": "D"
+          },
+          {
+            "name": "Mark Heggestad",
+            "party": "D"
+          },
+          {
+            "name": "Eli Johnson",
+            "party": "D"
+          },
+          {
+            "name": "John B. Todd",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Mark Kaye", "party": "R" },
-          { "name": "Gary L. Koniz", "party": "R" },
-          { "name": "John Rutherford", "party": "R" },
-          { "name": "Brandon Alexander Veazey", "party": "R" }
+          {
+            "name": "Mark Kaye",
+            "party": "R"
+          },
+          {
+            "name": "Gary L. Koniz",
+            "party": "R"
+          },
+          {
+            "name": "John Rutherford",
+            "party": "R"
+          },
+          {
+            "name": "Brandon Alexander Veazey",
+            "party": "R"
+          }
         ],
         "other": []
       }
     },
     {
       "district": 6,
-      "current_holder": { "name": "Randy Fine", "party": "R" },
+      "current_holder": {
+        "name": "Randy Fine",
+        "party": "R"
+      },
       "cook_pvi_2025": "R+14",
       "candidates": {
         "democratic": [
-          { "name": "Robert David Cooper II", "party": "D" },
-          { "name": "Steve Morgan", "party": "D" },
-          { "name": "Ronnie \"Ron\" Murchinson-Rivera", "party": "D" },
-          { "name": "Eric Yonce", "party": "D" }
+          {
+            "name": "Robert David Cooper II",
+            "party": "D"
+          },
+          {
+            "name": "Steve Morgan",
+            "party": "D"
+          },
+          {
+            "name": "Ronnie \"Ron\" Murchinson-Rivera",
+            "party": "D"
+          },
+          {
+            "name": "Eric Yonce",
+            "party": "D"
+          },
+          {
+            "name": "Jennifer Jenkins",
+            "party": "D"
+          },
+          {
+            "name": "James Stockton",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Aaron Baker", "party": "R" },
-          { "name": "Alexandra Van Cleef", "party": "R" },
-          { "name": "Will Furry", "party": "R" },
-          { "name": "Charles Gambaro", "party": "R" },
-          { "name": "Joshua A. Vasquez", "party": "R" },
-          { "name": "Jose Miguel Velazquez Cruz", "party": "R" }
+          {
+            "name": "Aaron Baker",
+            "party": "R"
+          },
+          {
+            "name": "Alexandra Van Cleef",
+            "party": "R"
+          },
+          {
+            "name": "Will Furry",
+            "party": "R"
+          },
+          {
+            "name": "Charles Gambaro",
+            "party": "R"
+          },
+          {
+            "name": "Joshua A. Vasquez",
+            "party": "R"
+          },
+          {
+            "name": "Jose Miguel Velazquez Cruz",
+            "party": "R"
+          },
+          {
+            "name": "Randy Fine",
+            "party": "R"
+          }
         ],
         "other": [
-          { "name": "Purvi Dilip Bangdiwala", "party": "NPA" },
-          { "name": "Michael Gist", "party": "NPA" },
-          { "name": "Amr Metwally", "party": "MGT" },
-          { "name": "Andrew Parrott", "party": "LPF" },
-          { "name": "Alec Pavlik", "party": "WRI" }
+          {
+            "name": "Purvi Dilip Bangdiwala",
+            "party": "NPA"
+          },
+          {
+            "name": "Michael Gist",
+            "party": "NPA"
+          },
+          {
+            "name": "Amr Metwally",
+            "party": "MGT"
+          },
+          {
+            "name": "Andrew Parrott",
+            "party": "LPF"
+          },
+          {
+            "name": "Alec Pavlik",
+            "party": "WRI"
+          }
         ]
       }
     },
     {
       "district": 7,
-      "current_holder": { "name": "Cory Mills", "party": "R" },
+      "current_holder": {
+        "name": "Cory Mills",
+        "party": "R"
+      },
       "cook_pvi_2025": "R+5",
       "candidates": {
         "democratic": [
-          { "name": "Marialana Kinter", "party": "D" }
+          {
+            "name": "Marialana Kinter",
+            "party": "D"
+          },
+          {
+            "name": "Jennifer Adams",
+            "party": "D"
+          },
+          {
+            "name": "Bale Dalton",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Michael Don Johnson", "party": "R" },
-          { "name": "Sarah Ulrich", "party": "R" }
+          {
+            "name": "Michael Don Johnson",
+            "party": "R"
+          },
+          {
+            "name": "Sarah Ulrich",
+            "party": "R"
+          },
+          {
+            "name": "Cory Mills",
+            "party": "R"
+          },
+          {
+            "name": "Mike Johnson",
+            "party": "R"
+          }
         ],
         "other": []
       }
     },
     {
       "district": 8,
-      "current_holder": { "name": "Mike Haridopolos", "party": "R" },
+      "current_holder": {
+        "name": "Mike Haridopolos",
+        "party": "R"
+      },
       "cook_pvi_2025": "R+11",
       "candidates": {
-        "democratic": [],
+        "democratic": [
+          {
+            "name": "Paul Dellinger",
+            "party": "D"
+          }
+        ],
         "republican": [
-          { "name": "Tom Comey", "party": "R" },
-          { "name": "Mike Haridopolos", "party": "R" },
-          { "name": "Jennifer Kleman", "party": "R" },
-          { "name": "Tayla Plumer", "party": "R" }
+          {
+            "name": "Tom Comey",
+            "party": "R"
+          },
+          {
+            "name": "Mike Haridopolos",
+            "party": "R"
+          },
+          {
+            "name": "Jennifer Kleman",
+            "party": "R"
+          },
+          {
+            "name": "Tayla Plumer",
+            "party": "R"
+          },
+          {
+            "name": "Daphney Rosario Acevedo-Calvert",
+            "party": "R"
+          }
         ],
         "other": [
-          { "name": "Lacey Villareal", "party": "IND" }
+          {
+            "name": "Lacey Villareal",
+            "party": "IND"
+          }
         ]
       }
     },
     {
       "district": 9,
-      "current_holder": { "name": "Darren Soto", "party": "D" },
+      "current_holder": {
+        "name": "Darren Soto",
+        "party": "D"
+      },
       "cook_pvi_2025": "D+4",
       "candidates": {
         "democratic": [
-          { "name": "Darren Soto", "party": "D" }
+          {
+            "name": "Darren Soto",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Marcus Carter", "party": "R" },
-          { "name": "Thomas E. Chalifoux Jr.", "party": "R" },
-          { "name": "Jorge Antonio Malavet", "party": "R" },
-          { "name": "Ingrid Nair Morales Vazquez", "party": "R" },
-          { "name": "Howard Steven Rance", "party": "R" }
+          {
+            "name": "Marcus Carter",
+            "party": "R"
+          },
+          {
+            "name": "Thomas E. Chalifoux Jr.",
+            "party": "R"
+          },
+          {
+            "name": "Jorge Antonio Malavet",
+            "party": "R"
+          },
+          {
+            "name": "Ingrid Nair Morales Vazquez",
+            "party": "R"
+          },
+          {
+            "name": "Howard Steven Rance",
+            "party": "R"
+          },
+          {
+            "name": "Justin Story",
+            "party": "R"
+          }
         ],
         "other": []
       }
     },
     {
       "district": 10,
-      "current_holder": { "name": "Maxwell Frost", "party": "D" },
+      "current_holder": {
+        "name": "Maxwell Frost",
+        "party": "D"
+      },
       "cook_pvi_2025": "D+13",
       "candidates": {
         "democratic": [
-          { "name": "Maxwell Alejandro Frost", "party": "D" }
+          {
+            "name": "Maxwell Alejandro Frost",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Willie J. Montague", "party": "R" },
-          { "name": "Vibert White", "party": "R" }
+          {
+            "name": "Willie J. Montague",
+            "party": "R"
+          },
+          {
+            "name": "Vibert White",
+            "party": "R"
+          },
+          {
+            "name": "Stuart Farber",
+            "party": "R"
+          }
         ],
         "other": []
       }
     },
     {
       "district": 11,
-      "current_holder": { "name": "Daniel Webster", "party": "R" },
+      "current_holder": {
+        "name": "Daniel Webster",
+        "party": "R"
+      },
       "cook_pvi_2025": "R+8",
       "candidates": {
         "democratic": [
-          { "name": "Barbara Harden \"Barbie\" Hall", "party": "D" },
-          { "name": "Royal Sylvester Webster II", "party": "D" },
-          { "name": "Dan Williams", "party": "D" }
+          {
+            "name": "Barbara Harden \"Barbie\" Hall",
+            "party": "D"
+          },
+          {
+            "name": "Royal Sylvester Webster II",
+            "party": "D"
+          },
+          {
+            "name": "Dan Williams",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Chanelle Krisette Barnes", "party": "R" },
-          { "name": "Ivette Palomo", "party": "R" },
-          { "name": "Mike Wilnau", "party": "R" }
+          {
+            "name": "Chanelle Krisette Barnes",
+            "party": "R"
+          },
+          {
+            "name": "Ivette Palomo",
+            "party": "R"
+          },
+          {
+            "name": "Mike Wilnau",
+            "party": "R"
+          }
         ],
         "other": [
-          { "name": "Ralph Groves", "party": "LPF" }
+          {
+            "name": "Ralph Groves",
+            "party": "LPF"
+          }
         ]
       }
     },
     {
       "district": 12,
-      "current_holder": { "name": "Gus M. Bilirakis", "party": "R" },
+      "current_holder": {
+        "name": "Gus M. Bilirakis",
+        "party": "R"
+      },
       "cook_pvi_2025": "R+17",
       "candidates": {
         "democratic": [
-          { "name": "Christopher Irizarry", "party": "D" }
+          {
+            "name": "Christopher Irizarry",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Gus M. Bilirakis", "party": "R" },
-          { "name": "Samantha Elizabeth June", "party": "R" }
+          {
+            "name": "Gus M. Bilirakis",
+            "party": "R"
+          },
+          {
+            "name": "Samantha Elizabeth June",
+            "party": "R"
+          }
         ],
         "other": [
-          { "name": "Branden Scrivener", "party": "NPA" }
+          {
+            "name": "Branden Scrivener",
+            "party": "NPA"
+          }
         ]
       }
     },
     {
       "district": 13,
-      "current_holder": { "name": "Anna Paulina Luna", "party": "R" },
+      "current_holder": {
+        "name": "Anna Paulina Luna",
+        "party": "R"
+      },
       "cook_pvi_2025": "R+5",
       "candidates": {
         "democratic": [
-          { "name": "John Thomas Fay", "party": "D" },
-          { "name": "Earle Ford", "party": "D" },
-          { "name": "Karla Kemp", "party": "D" },
-          { "name": "Susan R. Leff", "party": "D" },
-          { "name": "John William Liccione", "party": "D" },
-          { "name": "Jeffrey Moore", "party": "D" },
-          { "name": "Timothy Brandt Robinson", "party": "D" }
+          {
+            "name": "John Thomas Fay",
+            "party": "D"
+          },
+          {
+            "name": "Earle Ford",
+            "party": "D"
+          },
+          {
+            "name": "Karla Kemp",
+            "party": "D"
+          },
+          {
+            "name": "Susan R. Leff",
+            "party": "D"
+          },
+          {
+            "name": "John William Liccione",
+            "party": "D"
+          },
+          {
+            "name": "Jeffrey Moore",
+            "party": "D"
+          },
+          {
+            "name": "Timothy Brandt Robinson",
+            "party": "D"
+          },
+          {
+            "name": "Leela Gray",
+            "party": "D"
+          },
+          {
+            "name": "Reggie Paros",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Anna Paulina Luna", "party": "R" },
-          { "name": "Courtney Lynn Offutt", "party": "R" }
+          {
+            "name": "Anna Paulina Luna",
+            "party": "R"
+          },
+          {
+            "name": "Courtney Lynn Offutt",
+            "party": "R"
+          }
         ],
         "other": [
-          { "name": "Tony D'Arrigo", "party": "NPA" }
+          {
+            "name": "Tony D'Arrigo",
+            "party": "NPA"
+          }
         ]
       }
     },
     {
       "district": 14,
-      "current_holder": { "name": "Kathy Castor", "party": "D" },
+      "current_holder": {
+        "name": "Kathy Castor",
+        "party": "D"
+      },
       "cook_pvi_2025": "D+5",
       "candidates": {
         "democratic": [
-          { "name": "Kathy Castor", "party": "D" }
+          {
+            "name": "Kathy Castor",
+            "party": "D"
+          },
+          {
+            "name": "Juan Arauz",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Erik Mishiyev", "party": "R" },
-          { "name": "Robert \"Rocky\" Rochford", "party": "R" },
-          { "name": "Gavriel Eliyahu Soriano", "party": "R" },
-          { "name": "Dan Weldon", "party": "R" }
+          {
+            "name": "Erik Mishiyev",
+            "party": "R"
+          },
+          {
+            "name": "Robert \"Rocky\" Rochford",
+            "party": "R"
+          },
+          {
+            "name": "Gavriel Eliyahu Soriano",
+            "party": "R"
+          },
+          {
+            "name": "Dan Weldon",
+            "party": "R"
+          },
+          {
+            "name": "Amaro Lionheart",
+            "party": "R"
+          },
+          {
+            "name": "Shay Williams",
+            "party": "R"
+          }
         ],
         "other": []
       }
     },
     {
       "district": 15,
-      "current_holder": { "name": "Laurel M. Lee", "party": "R" },
+      "current_holder": {
+        "name": "Laurel M. Lee",
+        "party": "R"
+      },
       "cook_pvi_2025": "R+5",
       "candidates": {
         "democratic": [
-          { "name": "Jose Engell", "party": "D" },
-          { "name": "Darren McAuley", "party": "D" },
-          { "name": "Kimberly Overman", "party": "D" },
-          { "name": "Robert People", "party": "D" }
+          {
+            "name": "Jose Engell",
+            "party": "D"
+          },
+          {
+            "name": "Darren McAuley",
+            "party": "D"
+          },
+          {
+            "name": "Kimberly Overman",
+            "party": "D"
+          },
+          {
+            "name": "Robert People",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Laurel Lee", "party": "R" }
+          {
+            "name": "Laurel Lee",
+            "party": "R"
+          }
         ],
         "other": []
       }
     },
     {
       "district": 16,
-      "current_holder": { "name": "Vern Buchanan", "party": "R" },
+      "current_holder": {
+        "name": "Vern Buchanan",
+        "party": "R"
+      },
       "cook_pvi_2025": "R+7",
       "candidates": {
         "democratic": [
-          { "name": "Jonathan Harris", "party": "D" },
-          { "name": "Glenn Pearson", "party": "D" },
-          { "name": "Jan Schneider", "party": "D" }
+          {
+            "name": "Jonathan Harris",
+            "party": "D"
+          },
+          {
+            "name": "Glenn Pearson",
+            "party": "D"
+          },
+          {
+            "name": "Jan Schneider",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Vern Buchanan", "party": "R" },
-          { "name": "John Peters", "party": "R" },
-          { "name": "Edward Peter Pope", "party": "R" },
-          { "name": "Jason Edward Speir", "party": "R" }
+          {
+            "name": "Vern Buchanan",
+            "party": "R"
+          },
+          {
+            "name": "John Peters",
+            "party": "R"
+          },
+          {
+            "name": "Edward Peter Pope",
+            "party": "R"
+          },
+          {
+            "name": "Jason Edward Speir",
+            "party": "R"
+          }
         ],
         "other": [
-          { "name": "Mark Davis", "party": "NPA" },
-          { "name": "Keith Varian", "party": "NPA" }
+          {
+            "name": "Mark Davis",
+            "party": "NPA"
+          },
+          {
+            "name": "Keith Varian",
+            "party": "NPA"
+          }
         ]
       }
     },
     {
       "district": 17,
-      "current_holder": { "name": "W. Gregory Steube", "party": "R" },
+      "current_holder": {
+        "name": "W. Gregory Steube",
+        "party": "R"
+      },
       "cook_pvi_2025": "R+11",
       "candidates": {
         "democratic": [
-          { "name": "Matthew Montavon", "party": "D" },
-          { "name": "Allen L. Spence Jr.", "party": "D" }
+          {
+            "name": "Matthew Montavon",
+            "party": "D"
+          },
+          {
+            "name": "Allen L. Spence Jr.",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Greg Steube", "party": "R" }
+          {
+            "name": "Greg Steube",
+            "party": "R"
+          }
         ],
         "other": []
       }
     },
     {
       "district": 18,
-      "current_holder": { "name": "Scott Franklin", "party": "R" },
+      "current_holder": {
+        "name": "Scott Franklin",
+        "party": "R"
+      },
       "cook_pvi_2025": "R+14",
       "candidates": {
         "democratic": [
-          { "name": "Curtis Gibson", "party": "D" },
-          { "name": "Tiffanie Luong", "party": "D" }
+          {
+            "name": "Curtis Gibson",
+            "party": "D"
+          },
+          {
+            "name": "Tiffanie Luong",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Scott Franklin", "party": "R" }
+          {
+            "name": "Scott Franklin",
+            "party": "R"
+          }
         ],
         "other": [
-          { "name": "Deva Simmons", "party": "NPA" }
+          {
+            "name": "Deva Simmons",
+            "party": "NPA"
+          }
         ]
       }
     },
     {
       "district": 19,
-      "current_holder": { "name": "Byron Donalds", "party": "R" },
+      "current_holder": {
+        "name": "Byron Donalds",
+        "party": "R"
+      },
       "cook_pvi_2025": "R+14",
       "candidates": {
         "democratic": [
-          { "name": "Victor M. Arias", "party": "D" },
-          { "name": "Howard Sapp", "party": "D" }
+          {
+            "name": "Victor M. Arias",
+            "party": "D"
+          },
+          {
+            "name": "Howard Sapp",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Madison Cawthorn", "party": "R" },
-          { "name": "Chris Collins", "party": "R" },
-          { "name": "Ola Nesheswat Hawatmeh", "party": "R" },
-          { "name": "Dylan Modarelli", "party": "R" },
-          { "name": "James Oberweis", "party": "R" },
-          { "name": "Mike Pedersen", "party": "R" },
-          { "name": "Linda J. Sawyer", "party": "R" },
-          { "name": "Jim Schwartzel", "party": "R" },
-          { "name": "John Strand", "party": "R" },
-          { "name": "Richard Stephen Youschak III", "party": "R" }
+          {
+            "name": "Madison Cawthorn",
+            "party": "R"
+          },
+          {
+            "name": "Chris Collins",
+            "party": "R"
+          },
+          {
+            "name": "Ola Nesheswat Hawatmeh",
+            "party": "R"
+          },
+          {
+            "name": "Dylan Modarelli",
+            "party": "R"
+          },
+          {
+            "name": "James Oberweis",
+            "party": "R"
+          },
+          {
+            "name": "Mike Pedersen",
+            "party": "R"
+          },
+          {
+            "name": "Linda J. Sawyer",
+            "party": "R"
+          },
+          {
+            "name": "Jim Schwartzel",
+            "party": "R"
+          },
+          {
+            "name": "John Strand",
+            "party": "R"
+          },
+          {
+            "name": "Richard Stephen Youschak III",
+            "party": "R"
+          }
         ],
         "other": []
       }
     },
     {
       "district": 20,
-      "current_holder": { "name": "Sheila Cherfilus-McCormick", "party": "D" },
+      "current_holder": {
+        "name": "Sheila Cherfilus-McCormick",
+        "party": "D"
+      },
       "cook_pvi_2025": "D+22",
       "candidates": {
         "democratic": [
-          { "name": "Luther Campbell", "party": "D" },
-          { "name": "Dale V.C. Holness", "party": "D" },
-          { "name": "Elijah Manley", "party": "D" },
-          { "name": "Rudolph \"Rudy\" Moise", "party": "D" }
+          {
+            "name": "Luther Campbell",
+            "party": "D"
+          },
+          {
+            "name": "Dale V.C. Holness",
+            "party": "D"
+          },
+          {
+            "name": "Elijah Manley",
+            "party": "D"
+          },
+          {
+            "name": "Rudolph \"Rudy\" Moise",
+            "party": "D"
+          },
+          {
+            "name": "Sheila Cherfilus-McCormick",
+            "party": "D"
+          },
+          {
+            "name": "Mark Douglas",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Sendra Dorce", "party": "R" },
-          { "name": "Lateresa \"LA\" Jones", "party": "R" },
-          { "name": "Rod Joseph", "party": "R" },
-          { "name": "Gary Stein", "party": "R" }
+          {
+            "name": "Sendra Dorce",
+            "party": "R"
+          },
+          {
+            "name": "Lateresa \"LA\" Jones",
+            "party": "R"
+          },
+          {
+            "name": "Rod Joseph",
+            "party": "R"
+          },
+          {
+            "name": "Gary Stein",
+            "party": "R"
+          }
         ],
         "other": []
       }
     },
     {
       "district": 21,
-      "current_holder": { "name": "Brian J. Mast", "party": "R" },
+      "current_holder": {
+        "name": "Brian J. Mast",
+        "party": "R"
+      },
       "cook_pvi_2025": "R+7",
       "candidates": {
         "democratic": [
-          { "name": "Pia Dandiya", "party": "D" },
-          { "name": "James Martin", "party": "D" },
-          { "name": "Edward F. O'Connor", "party": "D" },
-          { "name": "Elizabeth Pandich", "party": "D" },
-          { "name": "Bernard Taylor", "party": "D" }
+          {
+            "name": "Pia Dandiya",
+            "party": "D"
+          },
+          {
+            "name": "James Martin",
+            "party": "D"
+          },
+          {
+            "name": "Edward F. O'Connor",
+            "party": "D"
+          },
+          {
+            "name": "Elizabeth Pandich",
+            "party": "D"
+          },
+          {
+            "name": "Bernard Taylor",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Brian Mast", "party": "R" },
-          { "name": "Ljubo Skrbic", "party": "R" }
+          {
+            "name": "Brian Mast",
+            "party": "R"
+          },
+          {
+            "name": "Ljubo Skrbic",
+            "party": "R"
+          }
         ],
         "other": [
-          { "name": "Robert A. Ott", "party": "NPA" }
+          {
+            "name": "Robert A. Ott",
+            "party": "NPA"
+          }
         ]
       }
     },
     {
       "district": 22,
-      "current_holder": { "name": "Lois Frankel", "party": "D" },
+      "current_holder": {
+        "name": "Lois Frankel",
+        "party": "D"
+      },
       "cook_pvi_2025": "D+4",
       "candidates": {
         "democratic": [
-          { "name": "Victoria Jane Boker Doyle", "party": "D" },
-          { "name": "Lois Frankel", "party": "D" }
+          {
+            "name": "Victoria Jane Boker Doyle",
+            "party": "D"
+          },
+          {
+            "name": "Lois Frankel",
+            "party": "D"
+          },
+          {
+            "name": "Ian Blake",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Deborah Adeimy", "party": "R" }
+          {
+            "name": "Deborah Adeimy",
+            "party": "R"
+          }
         ],
         "other": []
       }
     },
     {
       "district": 23,
-      "current_holder": { "name": "Jared Moskowitz", "party": "D" },
+      "current_holder": {
+        "name": "Jared Moskowitz",
+        "party": "D"
+      },
       "cook_pvi_2025": "D+2",
       "candidates": {
         "democratic": [
-          { "name": "Michaelangelo Collins Hamilton", "party": "D" },
-          { "name": "Oliver Adams Larkin", "party": "D" },
-          { "name": "Jared Moskowitz", "party": "D" }
+          {
+            "name": "Michaelangelo Collins Hamilton",
+            "party": "D"
+          },
+          {
+            "name": "Oliver Adams Larkin",
+            "party": "D"
+          },
+          {
+            "name": "Jared Moskowitz",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Joseph \"Joe\" Kaufman", "party": "R" },
-          { "name": "George R. Moraitis", "party": "R" },
-          { "name": "Rafael Arturo Ortiz", "party": "R" },
-          { "name": "Scott M. Singer", "party": "R" }
+          {
+            "name": "Joseph \"Joe\" Kaufman",
+            "party": "R"
+          },
+          {
+            "name": "George R. Moraitis",
+            "party": "R"
+          },
+          {
+            "name": "Rafael Arturo Ortiz",
+            "party": "R"
+          },
+          {
+            "name": "Scott M. Singer",
+            "party": "R"
+          }
         ],
         "other": []
       }
     },
     {
       "district": 24,
-      "current_holder": { "name": "Frederica S. Wilson", "party": "D" },
+      "current_holder": {
+        "name": "Frederica S. Wilson",
+        "party": "D"
+      },
       "cook_pvi_2025": "D+18",
       "candidates": {
         "democratic": [
-          { "name": "Frederica S. Wilson", "party": "D" }
+          {
+            "name": "Frederica S. Wilson",
+            "party": "D"
+          }
         ],
-        "republican": [],
+        "republican": [
+          {
+            "name": "Patricia Gonzalez",
+            "party": "R"
+          }
+        ],
         "other": []
       }
     },
     {
       "district": 25,
-      "current_holder": { "name": "Debbie Wasserman Schultz", "party": "D" },
+      "current_holder": {
+        "name": "Debbie Wasserman Schultz",
+        "party": "D"
+      },
       "cook_pvi_2025": "D+5",
       "candidates": {
-        "democratic": [],
+        "democratic": [
+          {
+            "name": "Debbie Wasserman Schultz",
+            "party": "D"
+          }
+        ],
         "republican": [
-          { "name": "Claudia Villatoro", "party": "R" }
+          {
+            "name": "Claudia Villatoro",
+            "party": "R"
+          },
+          {
+            "name": "Michael Carbonara",
+            "party": "R"
+          }
         ],
         "other": []
       }
     },
     {
       "district": 26,
-      "current_holder": { "name": "Mario Diaz-Balart", "party": "R" },
+      "current_holder": {
+        "name": "Mario Diaz-Balart",
+        "party": "R"
+      },
       "cook_pvi_2025": "R+16",
       "candidates": {
         "democratic": [
-          { "name": "Yurina Gil", "party": "D" },
-          { "name": "Dustin Lapolla", "party": "D" },
-          { "name": "Nicole Locklin", "party": "D" }
+          {
+            "name": "Yurina Gil",
+            "party": "D"
+          },
+          {
+            "name": "Dustin Lapolla",
+            "party": "D"
+          },
+          {
+            "name": "Nicole Locklin",
+            "party": "D"
+          }
         ],
-        "republican": [],
+        "republican": [
+          {
+            "name": "Mario Diaz-Balart",
+            "party": "R"
+          }
+        ],
         "other": []
       }
     },
     {
       "district": 27,
-      "current_holder": { "name": "Maria Elvira Salazar", "party": "R" },
+      "current_holder": {
+        "name": "Maria Elvira Salazar",
+        "party": "R"
+      },
       "cook_pvi_2025": "R+6",
       "candidates": {
         "democratic": [
-          { "name": "Alexander Fornino", "party": "D" },
-          { "name": "Robin Peguero", "party": "D" },
-          { "name": "Eliott Rodriguez", "party": "D" }
+          {
+            "name": "Alexander Fornino",
+            "party": "D"
+          },
+          {
+            "name": "Robin Peguero",
+            "party": "D"
+          },
+          {
+            "name": "Eliott Rodriguez",
+            "party": "D"
+          },
+          {
+            "name": "Richard Lamondin",
+            "party": "D"
+          },
+          {
+            "name": "Lev Parnas",
+            "party": "D"
+          }
         ],
-        "republican": [],
+        "republican": [
+          {
+            "name": "Maria Elvira Salazar",
+            "party": "R"
+          }
+        ],
         "other": []
       }
     },
     {
       "district": 28,
-      "current_holder": { "name": "Carlos A. Gimenez", "party": "R" },
+      "current_holder": {
+        "name": "Carlos A. Gimenez",
+        "party": "R"
+      },
       "cook_pvi_2025": "R+10",
       "candidates": {
         "democratic": [
-          { "name": "James F. Henry", "party": "D" },
-          { "name": "Roberto Martin Mieses-Robleto", "party": "D" }
+          {
+            "name": "James F. Henry",
+            "party": "D"
+          },
+          {
+            "name": "Roberto Martin Mieses-Robleto",
+            "party": "D"
+          },
+          {
+            "name": "Phil Ehr",
+            "party": "D"
+          },
+          {
+            "name": "Thomas Campione",
+            "party": "D"
+          }
         ],
         "republican": [
-          { "name": "Herrera Macuran", "party": "R" }
+          {
+            "name": "Herrera Macuran",
+            "party": "R"
+          },
+          {
+            "name": "Carlos A. Gimenez",
+            "party": "R"
+          }
         ],
-        "other": []
+        "other": [
+          {
+            "name": "Eddy Rojas",
+            "party": "IND"
+          }
+        ]
       }
     }
   ]
