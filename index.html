@@ -738,7 +738,7 @@
                   class="mode-select-button"
                   aria-pressed="false"
                 >
-                  Seat Party
+                  Incumbent
                 </button>
               </div>
             </div>
@@ -748,17 +748,17 @@
               <div class="overlay-toggle-grid mt-2 grid gap-2">
                 <label class="overlay-toggle">
                   <input id="toggle-district-numbers" type="checkbox" />
-                  <span class="overlay-toggle-label">District numbers</span>
+                  <span class="overlay-toggle-label">District Numbers</span>
                   <span class="overlay-toggle-switch" aria-hidden="true"></span>
                 </label>
                 <label class="overlay-toggle">
                   <input id="toggle-county-lines" type="checkbox" />
-                  <span class="overlay-toggle-label">County lines</span>
+                  <span class="overlay-toggle-label">County Borders</span>
                   <span class="overlay-toggle-switch" aria-hidden="true"></span>
                 </label>
                 <label class="overlay-toggle">
                   <input id="toggle-county-names" type="checkbox" />
-                  <span class="overlay-toggle-label">County names</span>
+                  <span class="overlay-toggle-label">County Names</span>
                   <span class="overlay-toggle-switch" aria-hidden="true"></span>
                 </label>
               </div>
@@ -818,6 +818,7 @@
       const MAP_BACKGROUND_FILL = "transparent";
       const FILTERED_OUT_FILL_LIGHT = "#dbe3ee";
       const FILTERED_OUT_FILL_DARK = "#334155";
+      const MAP_COUNTY_BORDERS_COLOR = "#000000";
       const MAP_OVERLAY_COLOR = "#cbd5e1";
       const MAP_MIN_ZOOM = 0.8;
       const MAP_MAX_ZOOM = 11;
@@ -846,6 +847,7 @@
         },
         districtPaths: new Map(),
         districtNumberLabels: new Map(),
+        countyNameLabels: [],
         overlays: {
           districtNumbers: true,
           countyLines: false,
@@ -1323,7 +1325,7 @@
             const path = sourcePath.cloneNode(true);
             path.setAttribute("fill", "none");
             path.setAttribute("fill-opacity", "0");
-            path.setAttribute("stroke", MAP_OVERLAY_COLOR);
+            path.setAttribute("stroke", MAP_COUNTY_BORDERS_COLOR);
             path.setAttribute("stroke-width", "0.45");
             path.setAttribute("vector-effect", "non-scaling-stroke");
             path.setAttribute("pointer-events", "none");
@@ -1359,7 +1361,12 @@
           countyNamesLayer.setAttribute("id", "county-names-layer");
           countyNamesLayer.setAttribute("pointer-events", "none");
           countyNamesLayer.querySelectorAll("text").forEach((text) => {
-            text.setAttribute("fill", MAP_OVERLAY_COLOR);
+            const anchorPoint = getTextAnchorPoint(text);
+            if (anchorPoint) {
+              text.setAttribute("data-anchor-x", String(anchorPoint.x));
+              text.setAttribute("data-anchor-y", String(anchorPoint.y));
+            }
+            text.setAttribute("fill", "#000000");
             text.setAttribute("stroke", "none");
             text.setAttribute("font-weight", "400");
             text.setAttribute("fill-opacity", "1");
@@ -1420,6 +1427,7 @@
         app.mapSvg = svg;
         app.districtPaths.clear();
         app.districtNumberLabels.clear();
+        app.countyNameLabels = [];
         app.overlayLayers = overlayLayers;
         applyOverlayVisibility();
         wireMapPanZoom(svg, zoomLayer);
@@ -1431,6 +1439,15 @@
               return;
             }
             app.districtNumberLabels.set(districtNumber, text);
+          });
+        }
+        if (overlayLayers?.countyNames) {
+          overlayLayers.countyNames.querySelectorAll("text").forEach((text) => {
+            const x = Number(text.getAttribute("data-anchor-x"));
+            const y = Number(text.getAttribute("data-anchor-y"));
+            if (Number.isFinite(x) && Number.isFinite(y)) {
+              app.countyNameLabels.push({ text, x, y });
+            }
           });
         }
 
@@ -1693,6 +1710,7 @@
         });
 
         updateDistrictNumberColors();
+        updateCountyNameColors();
       }
 
       function updateDistrictNumberColors() {
@@ -1705,6 +1723,92 @@
           const districtFill = district && matchesFilter(district) ? getDistrictColor(district) : getFilteredOutColor();
           label.setAttribute("fill", getReadableTextColorForFill(districtFill));
         });
+      }
+
+      function updateCountyNameColors() {
+        if (!app.countyNameLabels.length) {
+          return;
+        }
+
+        app.countyNameLabels.forEach(({ text, x, y }) => {
+          const fillColor = getDistrictFillAtMapPoint(x, y);
+          text.setAttribute("fill", getReadableTextColorForFill(fillColor || getFilteredOutColor()));
+        });
+      }
+
+      function getDistrictFillAtMapPoint(x, y) {
+        if (!Number.isFinite(x) || !Number.isFinite(y)) {
+          return null;
+        }
+
+        const point = createMapPoint(x, y);
+        if (!point) {
+          return null;
+        }
+
+        for (const [districtNumber, path] of app.districtPaths.entries()) {
+          if (typeof path.isPointInFill !== "function" || !path.isPointInFill(point)) {
+            continue;
+          }
+
+          const district = getDistrict(districtNumber);
+          if (!district) {
+            return null;
+          }
+          return matchesFilter(district) ? getDistrictColor(district) : getFilteredOutColor();
+        }
+
+        return null;
+      }
+
+      function createMapPoint(x, y) {
+        if (typeof DOMPoint === "function") {
+          return new DOMPoint(x, y);
+        }
+
+        if (app.mapSvg && typeof app.mapSvg.createSVGPoint === "function") {
+          const point = app.mapSvg.createSVGPoint();
+          point.x = x;
+          point.y = y;
+          return point;
+        }
+
+        return null;
+      }
+
+      function getTextAnchorPoint(text) {
+        if (!text) {
+          return null;
+        }
+
+        const transform = text.getAttribute("transform") || "";
+        const translateMatch = transform.match(/translate\(\s*(-?\d*\.?\d+)(?:[\s,]+(-?\d*\.?\d+))?\s*\)/i);
+        if (translateMatch) {
+          return {
+            x: Number(translateMatch[1]),
+            y: Number(translateMatch[2] || 0),
+          };
+        }
+
+        const x = Number(text.getAttribute("x"));
+        const y = Number(text.getAttribute("y"));
+        if (Number.isFinite(x) && Number.isFinite(y)) {
+          return { x, y };
+        }
+
+        if (typeof text.getBBox === "function") {
+          try {
+            const box = text.getBBox();
+            return {
+              x: box.x + box.width / 2,
+              y: box.y + box.height / 2,
+            };
+          } catch {
+            return null;
+          }
+        }
+
+        return null;
       }
 
       function getReadableTextColorForFill(fillColor) {
