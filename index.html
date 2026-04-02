@@ -896,7 +896,6 @@
       const THEME_STORAGE_KEY = "fl-map-theme";
       const EMBED_QUERY_PARAM = "embed";
       const EMBED_MODE_VALUE = "card";
-      const EMBED_IFRAME_HEIGHT_PX = 980;
       const EMBED_BASE_URL = "https://hunterttp.github.io/interactive-congressional-map/";
       const THEME_QUERY_PARAM = "theme";
       const FILTER_QUERY_PARAM = "filter";
@@ -1144,7 +1143,7 @@
           `<iframe src="${embedUrl.toString()}" ` +
           `title="Florida Congressional District Candidate Map" ` +
           `loading="lazy" ` +
-          `style="width:100%;height:${EMBED_IFRAME_HEIGHT_PX}px;border:0;" ` +
+          `style="border:0;" ` +
           `referrerpolicy="no-referrer-when-downgrade"></iframe>`;
 
         els.embedCodeOutput.value = code;
