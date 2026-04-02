@@ -7,6 +7,7 @@
     {
       "district": 1,
       "current_holder": { "name": "Jimmy Patronis", "party": "R" },
+      "cook_pvi_2025": "R+18",
       "candidates": {
         "democratic": [
           { "name": "Jennifer Gay Valimont", "party": "D" }
@@ -25,6 +26,7 @@
     {
       "district": 2,
       "current_holder": { "name": "Neal P. Dunn", "party": "R" },
+      "cook_pvi_2025": "R+8",
       "candidates": {
         "democratic": [
           { "name": "Huy-Yen Cam Bailey", "party": "D" },
@@ -46,6 +48,7 @@
     {
       "district": 3,
       "current_holder": { "name": "Kat Cammack", "party": "R" },
+      "cook_pvi_2025": "R+10",
       "candidates": {
         "democratic": [
           { "name": "Rock Aboujaoude Jr.", "party": "D" },
@@ -64,6 +67,7 @@
     {
       "district": 4,
       "current_holder": { "name": "Aaron Bean", "party": "R" },
+      "cook_pvi_2025": "R+5",
       "candidates": {
         "democratic": [
           { "name": "LaShonda \"L.J.\" Holloway", "party": "D" },
@@ -83,6 +87,7 @@
     {
       "district": 5,
       "current_holder": { "name": "John H. Rutherford", "party": "R" },
+      "cook_pvi_2025": "R+10",
       "candidates": {
         "democratic": [
           { "name": "Rachel Grage", "party": "D" },
@@ -103,6 +108,7 @@
     {
       "district": 6,
       "current_holder": { "name": "Randy Fine", "party": "R" },
+      "cook_pvi_2025": "R+14",
       "candidates": {
         "democratic": [
           { "name": "Robert David Cooper II", "party": "D" },
@@ -130,6 +136,7 @@
     {
       "district": 7,
       "current_holder": { "name": "Cory Mills", "party": "R" },
+      "cook_pvi_2025": "R+5",
       "candidates": {
         "democratic": [
           { "name": "Marialana Kinter", "party": "D" }
@@ -144,6 +151,7 @@
     {
       "district": 8,
       "current_holder": { "name": "Mike Haridopolos", "party": "R" },
+      "cook_pvi_2025": "R+11",
       "candidates": {
         "democratic": [],
         "republican": [
@@ -160,6 +168,7 @@
     {
       "district": 9,
       "current_holder": { "name": "Darren Soto", "party": "D" },
+      "cook_pvi_2025": "D+4",
       "candidates": {
         "democratic": [
           { "name": "Darren Soto", "party": "D" }
@@ -177,6 +186,7 @@
     {
       "district": 10,
       "current_holder": { "name": "Maxwell Frost", "party": "D" },
+      "cook_pvi_2025": "D+13",
       "candidates": {
         "democratic": [
           { "name": "Maxwell Alejandro Frost", "party": "D" }
@@ -191,6 +201,7 @@
     {
       "district": 11,
       "current_holder": { "name": "Daniel Webster", "party": "R" },
+      "cook_pvi_2025": "R+8",
       "candidates": {
         "democratic": [
           { "name": "Barbara Harden \"Barbie\" Hall", "party": "D" },
@@ -210,6 +221,7 @@
     {
       "district": 12,
       "current_holder": { "name": "Gus M. Bilirakis", "party": "R" },
+      "cook_pvi_2025": "R+17",
       "candidates": {
         "democratic": [
           { "name": "Christopher Irizarry", "party": "D" }
@@ -226,6 +238,7 @@
     {
       "district": 13,
       "current_holder": { "name": "Anna Paulina Luna", "party": "R" },
+      "cook_pvi_2025": "R+5",
       "candidates": {
         "democratic": [
           { "name": "John Thomas Fay", "party": "D" },
@@ -248,6 +261,7 @@
     {
       "district": 14,
       "current_holder": { "name": "Kathy Castor", "party": "D" },
+      "cook_pvi_2025": "D+5",
       "candidates": {
         "democratic": [
           { "name": "Kathy Castor", "party": "D" }
@@ -264,6 +278,7 @@
     {
       "district": 15,
       "current_holder": { "name": "Laurel M. Lee", "party": "R" },
+      "cook_pvi_2025": "R+5",
       "candidates": {
         "democratic": [
           { "name": "Jose Engell", "party": "D" },
@@ -280,6 +295,7 @@
     {
       "district": 16,
       "current_holder": { "name": "Vern Buchanan", "party": "R" },
+      "cook_pvi_2025": "R+7",
       "candidates": {
         "democratic": [
           { "name": "Jonathan Harris", "party": "D" },
@@ -301,6 +317,7 @@
     {
       "district": 17,
       "current_holder": { "name": "W. Gregory Steube", "party": "R" },
+      "cook_pvi_2025": "R+11",
       "candidates": {
         "democratic": [
           { "name": "Matthew Montavon", "party": "D" },
@@ -315,6 +332,7 @@
     {
       "district": 18,
       "current_holder": { "name": "Scott Franklin", "party": "R" },
+      "cook_pvi_2025": "R+14",
       "candidates": {
         "democratic": [
           { "name": "Curtis Gibson", "party": "D" },
@@ -331,6 +349,7 @@
     {
       "district": 19,
       "current_holder": { "name": "Byron Donalds", "party": "R" },
+      "cook_pvi_2025": "R+14",
       "candidates": {
         "democratic": [
           { "name": "Victor M. Arias", "party": "D" },
@@ -354,6 +373,7 @@
     {
       "district": 20,
       "current_holder": { "name": "Sheila Cherfilus-McCormick", "party": "D" },
+      "cook_pvi_2025": "D+22",
       "candidates": {
         "democratic": [
           { "name": "Luther Campbell", "party": "D" },
@@ -373,6 +393,7 @@
     {
       "district": 21,
       "current_holder": { "name": "Brian J. Mast", "party": "R" },
+      "cook_pvi_2025": "R+7",
       "candidates": {
         "democratic": [
           { "name": "Pia Dandiya", "party": "D" },
@@ -393,6 +414,7 @@
     {
       "district": 22,
       "current_holder": { "name": "Lois Frankel", "party": "D" },
+      "cook_pvi_2025": "D+4",
       "candidates": {
         "democratic": [
           { "name": "Victoria Jane Boker Doyle", "party": "D" },
@@ -407,6 +429,7 @@
     {
       "district": 23,
       "current_holder": { "name": "Jared Moskowitz", "party": "D" },
+      "cook_pvi_2025": "D+2",
       "candidates": {
         "democratic": [
           { "name": "Michaelangelo Collins Hamilton", "party": "D" },
@@ -425,6 +448,7 @@
     {
       "district": 24,
       "current_holder": { "name": "Frederica S. Wilson", "party": "D" },
+      "cook_pvi_2025": "D+18",
       "candidates": {
         "democratic": [
           { "name": "Frederica S. Wilson", "party": "D" }
@@ -436,6 +460,7 @@
     {
       "district": 25,
       "current_holder": { "name": "Debbie Wasserman Schultz", "party": "D" },
+      "cook_pvi_2025": "D+5",
       "candidates": {
         "democratic": [],
         "republican": [
@@ -447,6 +472,7 @@
     {
       "district": 26,
       "current_holder": { "name": "Mario Diaz-Balart", "party": "R" },
+      "cook_pvi_2025": "R+16",
       "candidates": {
         "democratic": [
           { "name": "Yurina Gil", "party": "D" },
@@ -460,6 +486,7 @@
     {
       "district": 27,
       "current_holder": { "name": "Maria Elvira Salazar", "party": "R" },
+      "cook_pvi_2025": "R+6",
       "candidates": {
         "democratic": [
           { "name": "Alexander Fornino", "party": "D" },
@@ -473,6 +500,7 @@
     {
       "district": 28,
       "current_holder": { "name": "Carlos A. Gimenez", "party": "R" },
+      "cook_pvi_2025": "R+10",
       "candidates": {
         "democratic": [
           { "name": "James F. Henry", "party": "D" },
