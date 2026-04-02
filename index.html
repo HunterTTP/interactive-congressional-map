@@ -275,11 +275,11 @@
       }
 
       html[data-theme="dark"] #stat-dem-seats {
-        color: #1f5fbd;
+        color: #1f5fbd !important;
       }
 
       html[data-theme="dark"] #stat-rep-seats {
-        color: #E13D37;
+        color: #E13D37 !important;
       }
 
       html[data-theme="dark"] .text-slate-600,
@@ -376,6 +376,24 @@
 
       .map-color-mode-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .map-workspace {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .map-summary-section,
+      .map-canvas-column,
+      .map-controls-column {
+        min-width: 0;
+      }
+
+      .map-controls-column {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
       }
 
       .mode-select-button {
@@ -515,12 +533,54 @@
         }
       }
 
+      @media (min-width: 860px), (orientation: landscape) and (min-width: 740px) {
+        .map-workspace {
+          display: grid;
+          grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+          grid-template-rows: auto auto;
+          align-items: start;
+          gap: 1rem;
+        }
+
+        .map-summary-section {
+          grid-column: 1;
+          grid-row: 1;
+        }
+
+        .map-controls-column {
+          grid-column: 1;
+          grid-row: 2;
+        }
+
+        .map-canvas-column {
+          grid-column: 2;
+          grid-row: 1 / span 2;
+        }
+
+        .map-summary-section .top-stats-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .map-summary-section .top-dates-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .map-controls-column .map-filter-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .map-controls-column .map-color-mode-grid,
+        .map-controls-column .overlay-toggle-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
     </style>
   </head>
   <body class="min-h-screen bg-slate-100 text-slate-900">
     <nav class="app-nav">
       <div class="mx-auto flex h-14 max-w-[1500px] items-center justify-between px-4">
-        <a href="#overview-panel" class="text-sm font-semibold tracking-wide text-slate-900 sm:text-base">
+        <a href="#map-panel" class="text-sm font-semibold tracking-wide text-slate-900 sm:text-base">
           Florida Congressional Districts
         </a>
 
@@ -550,199 +610,190 @@
     </aside>
 
     <main class="mx-auto max-w-[1500px] p-4 md:p-6 lg:p-8">
-      <header id="overview-panel" class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5 md:p-6">
-        <dl class="top-stats-grid mt-0 grid gap-1.5">
-          <div
-            data-stat-filter="all"
-            role="button"
-            tabindex="0"
-            class="top-card rounded-md bg-slate-50 p-1.5 transition-colors hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-            aria-label="Show all districts"
-          >
-            <dt class="top-card-label uppercase text-slate-500">Districts</dt>
-            <dd
-              id="stat-districts"
-              class="top-card-value mt-0.5 text-lg font-semibold text-slate-900 sm:text-xl"
-            >
-              -
-            </dd>
-          </div>
-          <div
-            data-stat-filter="D"
-            role="button"
-            tabindex="0"
-            class="top-card rounded-md bg-slate-50 p-1.5 transition-colors hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-            aria-label="Show D-Held districts"
-          >
-            <dt class="top-card-label uppercase text-slate-500">D-Held Seats</dt>
-            <dd
-              id="stat-dem-seats"
-              class="top-card-value mt-0.5 text-lg font-semibold text-slate-900 sm:text-xl"
-            >
-              -
-            </dd>
-          </div>
-          <div
-            data-stat-filter="R"
-            role="button"
-            tabindex="0"
-            class="top-card rounded-md bg-slate-50 p-1.5 transition-colors hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-            aria-label="Show R-Held districts"
-          >
-            <dt class="top-card-label uppercase text-slate-500">R-Held Seats</dt>
-            <dd
-              id="stat-rep-seats"
-              class="top-card-value mt-0.5 text-lg font-semibold text-slate-900 sm:text-xl"
-            >
-              -
-            </dd>
-          </div>
-        </dl>
-
-        <dl class="top-dates-grid mt-1.5 grid gap-1.5">
-          <div class="top-card rounded-md bg-slate-50 p-1.5">
-            <dt class="top-card-label uppercase text-slate-500">Primary Election</dt>
-            <dd
-              id="stat-primary-date"
-              class="top-card-value mt-0.5 whitespace-nowrap text-base font-semibold text-slate-900 sm:text-lg"
-            >
-              -
-            </dd>
-          </div>
-          <div class="top-card rounded-md bg-slate-50 p-1.5">
-            <dt class="top-card-label uppercase text-slate-500">General Election</dt>
-            <dd
-              id="stat-general-date"
-              class="top-card-value mt-0.5 whitespace-nowrap text-base font-semibold text-slate-900 sm:text-lg"
-            >
-              -
-            </dd>
-          </div>
-        </dl>
-      </header>
-
-      <div class="mt-3 sm:mt-4">
-        <section id="map-panel" class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-5">
+      <section id="map-panel" class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-5">
           <div id="map-view">
-            <div
-              id="map-frame"
-              class="relative h-[62vh] min-h-[500px] overflow-hidden rounded-xl border border-slate-200 bg-transparent"
-            >
-              <div id="map-viewport" class="absolute inset-0 grid place-items-center text-sm text-slate-500">
-                Loading map...
-              </div>
-              <div
-                id="map-tooltip"
-                class="pointer-events-none absolute hidden max-h-[360px] max-w-[360px] overflow-auto rounded-md border border-slate-300 bg-white px-3 py-2 text-xs shadow-lg"
-              ></div>
-            </div>
+            <div class="map-workspace">
+              <section class="map-summary-section" aria-label="Map summary">
+                <dl class="top-stats-grid mt-0 grid gap-1.5">
+                  <div
+                    data-stat-filter="all"
+                    role="button"
+                    tabindex="0"
+                    class="top-card rounded-md bg-slate-50 p-1.5 transition-colors hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+                    aria-label="Show all districts"
+                  >
+                    <dt class="top-card-label uppercase text-slate-500">Districts</dt>
+                    <dd
+                      id="stat-districts"
+                      class="top-card-value mt-0.5 text-lg font-semibold text-slate-900 sm:text-xl"
+                    >
+                      -
+                    </dd>
+                  </div>
+                  <div
+                    data-stat-filter="D"
+                    role="button"
+                    tabindex="0"
+                    class="top-card rounded-md bg-slate-50 p-1.5 transition-colors hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+                    aria-label="Show D-Held districts"
+                  >
+                    <dt class="top-card-label uppercase text-slate-500">D-Held Seats</dt>
+                    <dd
+                      id="stat-dem-seats"
+                      class="top-card-value mt-0.5 text-lg font-semibold text-slate-900 sm:text-xl"
+                    >
+                      -
+                    </dd>
+                  </div>
+                  <div
+                    data-stat-filter="R"
+                    role="button"
+                    tabindex="0"
+                    class="top-card rounded-md bg-slate-50 p-1.5 transition-colors hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+                    aria-label="Show R-Held districts"
+                  >
+                    <dt class="top-card-label uppercase text-slate-500">R-Held Seats</dt>
+                    <dd
+                      id="stat-rep-seats"
+                      class="top-card-value mt-0.5 text-lg font-semibold text-slate-900 sm:text-xl"
+                    >
+                      -
+                    </dd>
+                  </div>
+                </dl>
 
-            <div class="mt-3 flex flex-wrap items-center justify-center gap-3 text-xs text-slate-500 sm:justify-start">
-              <span class="inline-flex items-center gap-1">
-                <span id="legend-dot-d" class="h-2.5 w-2.5 rounded-full"></span>
-                <span id="legend-label-d">D-held</span>
-              </span>
-              <span class="inline-flex items-center gap-1">
-                <span id="legend-dot-r" class="h-2.5 w-2.5 rounded-full"></span>
-                <span id="legend-label-r">R-held</span>
-              </span>
-              <span class="inline-flex items-center gap-1">
-                <span id="legend-dot-other" class="h-2.5 w-2.5 rounded-full"></span>
-                <span id="legend-label-other">Other/Unknown</span>
-              </span>
-            </div>
+                <dl class="top-dates-grid mt-1.5 grid gap-1.5">
+                  <div class="top-card rounded-md bg-slate-50 p-1.5">
+                    <dt class="top-card-label uppercase text-slate-500">Primary Election</dt>
+                    <dd
+                      id="stat-primary-date"
+                      class="top-card-value mt-0.5 whitespace-nowrap text-base font-semibold text-slate-900 sm:text-lg"
+                    >
+                      -
+                    </dd>
+                  </div>
+                  <div class="top-card rounded-md bg-slate-50 p-1.5">
+                    <dt class="top-card-label uppercase text-slate-500">General Election</dt>
+                    <dd
+                      id="stat-general-date"
+                      class="top-card-value mt-0.5 whitespace-nowrap text-base font-semibold text-slate-900 sm:text-lg"
+                    >
+                      -
+                    </dd>
+                  </div>
+                </dl>
+              </section>
 
-            <div class="mt-3 border-t border-slate-200 pt-3">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Filters</p>
-              <div class="map-filter-grid mt-2 grid gap-2">
-                <button
-                  type="button"
-                  data-filter="all"
-                  class="filter-chip map-filter-chip active inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+              <div class="map-canvas-column">
+                <div
+                  id="map-frame"
+                  class="relative h-[62vh] min-h-[500px] overflow-hidden rounded-xl border border-slate-200 bg-transparent"
                 >
-                  All Districts
-                </button>
-                <button
-                  type="button"
-                  data-filter="D"
-                  class="filter-chip map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-                >
-                  D-Held
-                </button>
-                <button
-                  type="button"
-                  data-filter="R"
-                  class="filter-chip map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-                >
-                  R-Held
-                </button>
-                <button
-                  type="button"
-                  data-filter="noD"
-                  class="filter-chip map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-                >
-                  No D-Candidates
-                </button>
-                <button
-                  type="button"
-                  data-filter="noR"
-                  class="filter-chip map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-                >
-                  No R-Candidates
-                </button>
-                <button
-                  id="reset-view"
-                  type="button"
-                  class="map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-                >
-                  Recenter View
-                </button>
-              </div>
-            </div>
+                  <div id="map-viewport" class="absolute inset-0 grid place-items-center text-sm text-slate-500">
+                    Loading map...
+                  </div>
+                  <div
+                    id="map-tooltip"
+                    class="pointer-events-none absolute hidden max-h-[360px] max-w-[360px] overflow-auto rounded-md border border-slate-300 bg-white px-3 py-2 text-xs shadow-lg"
+                  ></div>
+                </div>
 
-            <div class="mt-3 border-t border-slate-200 pt-3">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Shading</p>
-              <div class="map-color-mode-grid mt-2 grid gap-2" role="group" aria-label="Map coloring mode">
-                <button
-                  id="color-mode-cook-pvi"
-                  type="button"
-                  data-color-mode="pvi"
-                  class="mode-select-button"
-                  aria-pressed="true"
-                >
-                  Cook PVI
-                </button>
-                <button
-                  id="color-mode-seat-party"
-                  type="button"
-                  data-color-mode="seat-holder"
-                  class="mode-select-button"
-                  aria-pressed="false"
-                >
-                  Incumbent
-                </button>
+                <div class="mt-3 flex flex-wrap items-center justify-center gap-3 text-xs text-slate-500 sm:justify-start">
+                  <span class="inline-flex items-center gap-1">
+                    <span id="legend-dot-d" class="h-2.5 w-2.5 rounded-full"></span>
+                    <span id="legend-label-d">D-held</span>
+                  </span>
+                  <span class="inline-flex items-center gap-1">
+                    <span id="legend-dot-r" class="h-2.5 w-2.5 rounded-full"></span>
+                    <span id="legend-label-r">R-held</span>
+                  </span>
+                  <span class="inline-flex items-center gap-1">
+                    <span id="legend-dot-other" class="h-2.5 w-2.5 rounded-full"></span>
+                    <span id="legend-label-other">Other/Unknown</span>
+                  </span>
+                </div>
               </div>
-            </div>
 
-            <div class="mt-3 border-t border-slate-200 pt-3">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Overlays</p>
-              <div class="overlay-toggle-grid mt-2 grid gap-2">
-                <label class="overlay-toggle">
-                  <input id="toggle-district-numbers" type="checkbox" />
-                  <span class="overlay-toggle-label">District Numbers</span>
-                  <span class="overlay-toggle-switch" aria-hidden="true"></span>
-                </label>
-                <label class="overlay-toggle">
-                  <input id="toggle-county-lines" type="checkbox" />
-                  <span class="overlay-toggle-label">County Borders</span>
-                  <span class="overlay-toggle-switch" aria-hidden="true"></span>
-                </label>
-                <label class="overlay-toggle">
-                  <input id="toggle-county-names" type="checkbox" />
-                  <span class="overlay-toggle-label">County Names</span>
-                  <span class="overlay-toggle-switch" aria-hidden="true"></span>
-                </label>
-              </div>
+              <aside class="map-controls-column" aria-label="Map controls">
+                <div class="map-controls-section border-t border-slate-200 pt-3">
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Filters</p>
+                  <div class="map-filter-grid mt-2 grid gap-2">
+                    <button
+                      type="button"
+                      data-filter="all"
+                      class="filter-chip map-filter-chip active inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+                    >
+                      All Districts
+                    </button>
+                    <button
+                      type="button"
+                      data-filter="D"
+                      class="filter-chip map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+                    >
+                      D-Held
+                    </button>
+                    <button
+                      type="button"
+                      data-filter="R"
+                      class="filter-chip map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+                    >
+                      R-Held
+                    </button>
+                    <button
+                      id="reset-view"
+                      type="button"
+                      class="map-filter-chip inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2.5 py-2 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+                    >
+                      Recenter View
+                    </button>
+                  </div>
+                </div>
+
+                <div class="map-controls-section border-t border-slate-200 pt-3">
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Shading</p>
+                  <div class="map-color-mode-grid mt-2 grid gap-2" role="group" aria-label="Map coloring mode">
+                    <button
+                      id="color-mode-cook-pvi"
+                      type="button"
+                      data-color-mode="pvi"
+                      class="mode-select-button"
+                      aria-pressed="true"
+                    >
+                      Cook PVI
+                    </button>
+                    <button
+                      id="color-mode-seat-party"
+                      type="button"
+                      data-color-mode="seat-holder"
+                      class="mode-select-button"
+                      aria-pressed="false"
+                    >
+                      Incumbent
+                    </button>
+                  </div>
+                </div>
+
+                <div class="map-controls-section border-t border-slate-200 pt-3">
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Overlays</p>
+                  <div class="overlay-toggle-grid mt-2 grid gap-2">
+                    <label class="overlay-toggle">
+                      <input id="toggle-district-numbers" type="checkbox" />
+                      <span class="overlay-toggle-label">District Numbers</span>
+                      <span class="overlay-toggle-switch" aria-hidden="true"></span>
+                    </label>
+                    <label class="overlay-toggle">
+                      <input id="toggle-county-lines" type="checkbox" />
+                      <span class="overlay-toggle-label">County Borders</span>
+                      <span class="overlay-toggle-switch" aria-hidden="true"></span>
+                    </label>
+                    <label class="overlay-toggle">
+                      <input id="toggle-county-names" type="checkbox" />
+                      <span class="overlay-toggle-label">County Names</span>
+                      <span class="overlay-toggle-switch" aria-hidden="true"></span>
+                    </label>
+                  </div>
+                </div>
+              </aside>
             </div>
           </div>
 
@@ -773,7 +824,6 @@
             </section>
           </div>
         </section>
-      </div>
     </main>
 
     <script>
@@ -2254,12 +2304,6 @@
       function matchesFilter(district) {
         if (app.filter === "all") {
           return true;
-        }
-        if (app.filter === "noD") {
-          return (district.candidates?.democratic?.length ?? 0) === 0;
-        }
-        if (app.filter === "noR") {
-          return (district.candidates?.republican?.length ?? 0) === 0;
         }
         return district.current_holder?.party === app.filter;
       }
