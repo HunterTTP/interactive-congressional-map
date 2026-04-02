@@ -38,7 +38,10 @@
 
       .filter-chip.active,
       .filter-chip.active:hover,
-      .filter-chip.active:active {
+      .filter-chip.active:active,
+      .mode-select-button.is-active,
+      .mode-select-button.is-active:hover,
+      .mode-select-button.is-active:active {
         background: #eff6ff;
         color: #1e3a8a;
         border-color: #1d4ed8;
@@ -294,11 +297,14 @@
 
       html[data-theme="dark"] .filter-chip.active,
       html[data-theme="dark"] .filter-chip.active:hover,
-      html[data-theme="dark"] .filter-chip.active:active {
-        background: #e2e8f0;
-        color: #0f172a;
-        border-color: #38bdf8;
-        box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.45);
+      html[data-theme="dark"] .filter-chip.active:active,
+      html[data-theme="dark"] .mode-select-button.is-active,
+      html[data-theme="dark"] .mode-select-button.is-active:hover,
+      html[data-theme="dark"] .mode-select-button.is-active:active {
+        background: #1e293b !important;
+        color: #e2e8f0 !important;
+        border-color: #38bdf8 !important;
+        box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.35) !important;
       }
 
       html[data-theme="dark"] .overlay-toggle {
@@ -319,20 +325,13 @@
       }
 
       html[data-theme="dark"] .mode-select-button {
-        background: #0f172a;
-        border-color: #334155;
-        color: #cbd5e1;
+        background: #0f172a !important;
+        border-color: #334155 !important;
+        color: #cbd5e1 !important;
       }
 
       html[data-theme="dark"] .mode-select-button:hover {
-        background: #243244;
-      }
-
-      html[data-theme="dark"] .mode-select-button.is-active {
-        background: #e2e8f0;
-        color: #0f172a;
-        border-color: #38bdf8;
-        box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.45);
+        background: #243244 !important;
       }
 
       html[data-theme="dark"] #map-tooltip {
@@ -399,13 +398,6 @@
       .mode-select-button:focus-visible {
         outline: 2px solid #94a3b8;
         outline-offset: 2px;
-      }
-
-      .mode-select-button.is-active {
-        background: #eff6ff;
-        color: #1e3a8a;
-        border-color: #1d4ed8;
-        box-shadow: 0 0 0 1px rgba(29, 78, 216, 0.35);
       }
 
       .overlay-toggle {
