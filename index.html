@@ -2016,16 +2016,56 @@
         const frameRect = els.mapFrame.getBoundingClientRect();
         const tooltip = els.mapTooltip;
 
-        let x = event.clientX - frameRect.left + 12;
-        let y = event.clientY - frameRect.top + 12;
+        const cursorX = event.clientX - frameRect.left;
+        const cursorY = event.clientY - frameRect.top;
+        const tooltipWidth = tooltip.offsetWidth;
+        const tooltipHeight = tooltip.offsetHeight;
+        const margin = 8;
+        const pointerGap = 12;
+        const minX = margin;
+        const minY = margin;
+        const maxX = Math.max(margin, frameRect.width - tooltipWidth - margin);
+        const maxY = Math.max(margin, frameRect.height - tooltipHeight - margin);
 
-        const maxX = frameRect.width - tooltip.offsetWidth - 8;
-        const maxY = frameRect.height - tooltip.offsetHeight - 8;
+        const fitsOnScreen = (x, y) =>
+          x >= minX && y >= minY && x <= maxX && y <= maxY;
+        const clamp = (value, min, max) => Math.max(min, Math.min(value, max));
+        const cursorInside = (x, y) =>
+          cursorX >= x && cursorX <= x + tooltipWidth && cursorY >= y && cursorY <= y + tooltipHeight;
 
-        x = Math.max(8, Math.min(x, maxX));
-        y = Math.max(8, Math.min(y, maxY));
+        const candidates = [
+          { x: cursorX + pointerGap, y: cursorY - tooltipHeight - pointerGap }, // right + above
+          { x: cursorX - tooltipWidth - pointerGap, y: cursorY - tooltipHeight - pointerGap }, // left + above
+          { x: cursorX + pointerGap, y: cursorY - tooltipHeight / 2 }, // right side
+          { x: cursorX - tooltipWidth - pointerGap, y: cursorY - tooltipHeight / 2 }, // left side
+          { x: cursorX + pointerGap, y: cursorY + pointerGap }, // right + below
+          { x: cursorX - tooltipWidth - pointerGap, y: cursorY + pointerGap }, // left + below
+        ];
 
-        tooltip.style.transform = `translate(${x}px, ${y}px)`;
+        let placement = candidates.find(({ x, y }) => fitsOnScreen(x, y));
+
+        if (!placement) {
+          // Prefer above-cursor placement first, then adapt while staying in-bounds.
+          let x = clamp(cursorX + pointerGap, minX, maxX);
+          let y = clamp(cursorY - tooltipHeight - pointerGap, minY, maxY);
+
+          // If clamping put the tooltip under the pointer, try alternate positions.
+          if (cursorInside(x, y)) {
+            const belowY = clamp(cursorY + pointerGap, minY, maxY);
+            if (!cursorInside(x, belowY)) {
+              y = belowY;
+            } else {
+              const leftX = clamp(cursorX - tooltipWidth - pointerGap, minX, maxX);
+              if (!cursorInside(leftX, y)) {
+                x = leftX;
+              }
+            }
+          }
+
+          placement = { x, y };
+        }
+
+        tooltip.style.transform = `translate(${placement.x}px, ${placement.y}px)`;
       }
 
       function hideTooltip() {
