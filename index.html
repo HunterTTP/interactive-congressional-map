@@ -873,6 +873,7 @@
           zoomBehavior: null,
           zoomSelection: null,
           zoomLayer: null,
+          districtLayer: null,
           currentTransform: null,
           gestureDidTransform: false,
           activeTapByPointerId: new Map(),
@@ -1461,6 +1462,7 @@
         app.overlayLayers = overlayLayers;
         applyOverlayVisibility();
         wireMapPanZoom(svg, zoomLayer);
+        app.mapInteraction.districtLayer = districtGroup;
 
         if (overlayLayers?.districtNumbers) {
           overlayLayers.districtNumbers.querySelectorAll("text").forEach((text) => {
@@ -1628,10 +1630,82 @@
 
         clearHoverState();
         const defaultScale = window.matchMedia(`(min-width: ${LARGE_SCREEN_MIN_WIDTH}px)`).matches ? MAP_MIN_ZOOM : 1;
-        const targetTransform = d3.zoomIdentity.translate(MAP_DEFAULT_PAN_X, 0).scale(defaultScale);
+        const targetTransform = getCenteredDefaultTransform(defaultScale, MAP_DEFAULT_PAN_X, 0);
         zoomSelection.call(zoomBehavior.transform, targetTransform);
         app.mapInteraction.currentTransform = targetTransform;
         app.suppressMapClickUntil = Date.now() + MAP_GESTURE_CLICK_SUPPRESS_MS;
+      }
+
+      function getCenteredDefaultTransform(scale, panX, panY) {
+        const contentBounds = getMapContentBounds();
+        const viewBox = getMapViewBox();
+        if (!contentBounds || !viewBox) {
+          return d3.zoomIdentity.translate(panX, panY).scale(scale);
+        }
+
+        const viewCenterX = viewBox.x + viewBox.width / 2;
+        const viewCenterY = viewBox.y + viewBox.height / 2;
+        const contentCenterX = contentBounds.x + contentBounds.width / 2;
+        const contentCenterY = contentBounds.y + contentBounds.height / 2;
+
+        const translateX = viewCenterX - contentCenterX * scale + panX;
+        const translateY = viewCenterY - contentCenterY * scale + panY;
+        return d3.zoomIdentity.translate(translateX, translateY).scale(scale);
+      }
+
+      function getMapContentBounds() {
+        const districtLayer = app.mapInteraction.districtLayer;
+        if (!districtLayer || typeof districtLayer.getBBox !== "function") {
+          return null;
+        }
+
+        try {
+          const bounds = districtLayer.getBBox();
+          if (
+            !Number.isFinite(bounds.x) ||
+            !Number.isFinite(bounds.y) ||
+            !Number.isFinite(bounds.width) ||
+            !Number.isFinite(bounds.height) ||
+            bounds.width <= 0 ||
+            bounds.height <= 0
+          ) {
+            return null;
+          }
+          return bounds;
+        } catch {
+          return null;
+        }
+      }
+
+      function getMapViewBox() {
+        if (!app.mapSvg) {
+          return null;
+        }
+
+        const baseViewBox = app.mapSvg.viewBox?.baseVal;
+        if (baseViewBox && Number.isFinite(baseViewBox.width) && Number.isFinite(baseViewBox.height)) {
+          return {
+            x: Number.isFinite(baseViewBox.x) ? baseViewBox.x : 0,
+            y: Number.isFinite(baseViewBox.y) ? baseViewBox.y : 0,
+            width: baseViewBox.width,
+            height: baseViewBox.height,
+          };
+        }
+
+        const rawViewBox = app.mapSvg.getAttribute("viewBox");
+        if (rawViewBox) {
+          const [x, y, width, height] = rawViewBox.split(/\s+/).map(Number);
+          if (Number.isFinite(width) && Number.isFinite(height)) {
+            return {
+              x: Number.isFinite(x) ? x : 0,
+              y: Number.isFinite(y) ? y : 0,
+              width,
+              height,
+            };
+          }
+        }
+
+        return null;
       }
 
       function didZoomTransformChange(previousTransform, nextTransform) {
