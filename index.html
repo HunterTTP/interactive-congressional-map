@@ -340,6 +340,21 @@
         color: #e2e8f0;
       }
 
+      html[data-embed="card"] .app-nav,
+      html[data-embed="card"] #mobile-menu,
+      html[data-embed="card"] #mobile-menu-backdrop {
+        display: none !important;
+      }
+
+      html[data-embed="card"] body {
+        background: transparent !important;
+      }
+
+      html[data-embed="card"] main {
+        max-width: none !important;
+        padding: 0 !important;
+      }
+
       .top-stats-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
@@ -607,6 +622,23 @@
         <input id="theme-toggle-mobile" type="checkbox" aria-label="Toggle dark mode" />
         <span class="theme-switch-track" aria-hidden="true"></span>
       </label>
+      <div class="mt-3 border-t border-slate-200 pt-3">
+        <p class="px-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Embed</p>
+        <button
+          id="generate-embed"
+          type="button"
+          class="mt-2 inline-flex min-h-[42px] w-full items-center justify-center rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+        >
+          Generate Embed
+        </button>
+        <textarea
+          id="embed-code-output"
+          class="mt-2 h-28 w-full rounded-md border border-slate-300 bg-white p-2 text-xs text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+          readonly
+          placeholder="Embed code will appear here."
+          aria-label="Generated embed code"
+        ></textarea>
+      </div>
     </aside>
 
     <main class="mx-auto max-w-[1500px] p-4 md:p-6 lg:p-8">
@@ -862,6 +894,19 @@
       const ZOOM_EPSILON = 0.001;
       const PAN_EPSILON = 0.5;
       const THEME_STORAGE_KEY = "fl-map-theme";
+      const EMBED_QUERY_PARAM = "embed";
+      const EMBED_MODE_VALUE = "card";
+      const EMBED_IFRAME_HEIGHT_PX = 980;
+      const EMBED_BASE_URL = "https://hunterttp.github.io/interactive-congressional-map/";
+      const THEME_QUERY_PARAM = "theme";
+      const FILTER_QUERY_PARAM = "filter";
+      const COLOR_MODE_QUERY_PARAM = "colorMode";
+      const OVERLAY_DISTRICT_NUMBERS_QUERY_PARAM = "districtNumbers";
+      const OVERLAY_COUNTY_LINES_QUERY_PARAM = "countyLines";
+      const OVERLAY_COUNTY_NAMES_QUERY_PARAM = "countyNames";
+      const ZOOM_QUERY_PARAM = "zoom";
+      const PAN_X_QUERY_PARAM = "panX";
+      const PAN_Y_QUERY_PARAM = "panY";
 
       const app = {
         data: null,
@@ -874,6 +919,7 @@
           zoomSelection: null,
           zoomLayer: null,
           districtLayer: null,
+          initialTransformFromUrl: null,
           currentTransform: null,
           gestureDidTransform: false,
           activeTapByPointerId: new Map(),
@@ -929,6 +975,8 @@
         mobileMenu: document.getElementById("mobile-menu"),
         mobileMenuBackdrop: document.getElementById("mobile-menu-backdrop"),
         themeToggleMobile: document.getElementById("theme-toggle-mobile"),
+        generateEmbed: document.getElementById("generate-embed"),
+        embedCodeOutput: document.getElementById("embed-code-output"),
         selectedPviCard: document.getElementById("selected-pvi-card"),
         selectedPvi: document.getElementById("selected-pvi"),
       };
@@ -936,6 +984,8 @@
       init();
 
       async function init() {
+        applyEmbedModeFromUrl();
+        applyInitialMapSettingsFromUrl();
         wireNavbarControls();
         wireStaticControls();
         wirePageZoomGuards();
@@ -956,7 +1006,7 @@
           const mapParts = buildInteractiveMap(svgText);
           mountMap(mapParts.svg, mapParts.zoomLayer, mapParts.districtGroup, mapParts.overlayLayers);
 
-          setFilter("all");
+          setFilter(app.filter);
           renderSelectedDistrict();
         } catch (error) {
           const message =
@@ -986,12 +1036,124 @@
         if (els.mobileMenuBackdrop) {
           els.mobileMenuBackdrop.addEventListener("click", () => setMobileMenuOpen(false));
         }
+        if (els.generateEmbed) {
+          els.generateEmbed.addEventListener("click", generateEmbedCode);
+        }
         document.addEventListener("keydown", (event) => {
           if (event.key === "Escape" && app.mobileMenuOpen) {
             setMobileMenuOpen(false);
           }
         });
 
+      }
+
+      function applyEmbedModeFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const embedValue = params.get(EMBED_QUERY_PARAM);
+        const isEmbedMode = embedValue === EMBED_MODE_VALUE || embedValue === "1" || embedValue === "true";
+        if (!isEmbedMode) {
+          return;
+        }
+
+        document.documentElement.setAttribute("data-embed", EMBED_MODE_VALUE);
+        app.mobileMenuOpen = false;
+        document.body.style.overflow = "";
+      }
+
+      function applyInitialMapSettingsFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+
+        const requestedFilter = params.get(FILTER_QUERY_PARAM);
+        if (requestedFilter === "all" || requestedFilter === "D" || requestedFilter === "R") {
+          app.filter = requestedFilter;
+        }
+
+        const requestedColorMode = params.get(COLOR_MODE_QUERY_PARAM);
+        if (requestedColorMode === "pvi" || requestedColorMode === "seat-holder") {
+          app.colorMode = requestedColorMode;
+        }
+
+        const districtNumbersOverlay = parseBooleanQueryParam(params.get(OVERLAY_DISTRICT_NUMBERS_QUERY_PARAM));
+        if (districtNumbersOverlay !== null) {
+          app.overlays.districtNumbers = districtNumbersOverlay;
+        }
+        const countyLinesOverlay = parseBooleanQueryParam(params.get(OVERLAY_COUNTY_LINES_QUERY_PARAM));
+        if (countyLinesOverlay !== null) {
+          app.overlays.countyLines = countyLinesOverlay;
+        }
+        const countyNamesOverlay = parseBooleanQueryParam(params.get(OVERLAY_COUNTY_NAMES_QUERY_PARAM));
+        if (countyNamesOverlay !== null) {
+          app.overlays.countyNames = countyNamesOverlay;
+        }
+
+        const requestedZoom = Number(params.get(ZOOM_QUERY_PARAM));
+        const requestedPanX = Number(params.get(PAN_X_QUERY_PARAM));
+        const requestedPanY = Number(params.get(PAN_Y_QUERY_PARAM));
+        if (
+          Number.isFinite(requestedZoom) &&
+          Number.isFinite(requestedPanX) &&
+          Number.isFinite(requestedPanY) &&
+          requestedZoom >= MAP_MIN_ZOOM &&
+          requestedZoom <= MAP_MAX_ZOOM
+        ) {
+          app.mapInteraction.initialTransformFromUrl = {
+            k: requestedZoom,
+            x: requestedPanX,
+            y: requestedPanY,
+          };
+        }
+      }
+
+      function parseBooleanQueryParam(value) {
+        if (value === "1" || value === "true") {
+          return true;
+        }
+        if (value === "0" || value === "false") {
+          return false;
+        }
+        return null;
+      }
+
+      function generateEmbedCode() {
+        if (!els.embedCodeOutput) {
+          return;
+        }
+
+        const embedUrl = new URL(EMBED_BASE_URL);
+        embedUrl.searchParams.set(EMBED_QUERY_PARAM, EMBED_MODE_VALUE);
+        embedUrl.searchParams.set(THEME_QUERY_PARAM, app.theme);
+        embedUrl.searchParams.set(FILTER_QUERY_PARAM, app.filter);
+        embedUrl.searchParams.set(COLOR_MODE_QUERY_PARAM, app.colorMode);
+        embedUrl.searchParams.set(OVERLAY_DISTRICT_NUMBERS_QUERY_PARAM, app.overlays.districtNumbers ? "1" : "0");
+        embedUrl.searchParams.set(OVERLAY_COUNTY_LINES_QUERY_PARAM, app.overlays.countyLines ? "1" : "0");
+        embedUrl.searchParams.set(OVERLAY_COUNTY_NAMES_QUERY_PARAM, app.overlays.countyNames ? "1" : "0");
+
+        const currentTransform = app.mapInteraction.currentTransform;
+        if (
+          currentTransform &&
+          Number.isFinite(currentTransform.k) &&
+          Number.isFinite(currentTransform.x) &&
+          Number.isFinite(currentTransform.y)
+        ) {
+          embedUrl.searchParams.set(ZOOM_QUERY_PARAM, formatTransformParam(currentTransform.k));
+          embedUrl.searchParams.set(PAN_X_QUERY_PARAM, formatTransformParam(currentTransform.x));
+          embedUrl.searchParams.set(PAN_Y_QUERY_PARAM, formatTransformParam(currentTransform.y));
+        }
+        embedUrl.hash = "";
+        const code =
+          `<iframe src="${embedUrl.toString()}" ` +
+          `title="Florida Congressional District Candidate Map" ` +
+          `loading="lazy" ` +
+          `style="width:100%;height:${EMBED_IFRAME_HEIGHT_PX}px;border:0;" ` +
+          `referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+
+        els.embedCodeOutput.value = code;
+        els.embedCodeOutput.focus();
+        els.embedCodeOutput.select();
+      }
+
+      function formatTransformParam(value) {
+        return Number(value).toFixed(4).replace(/\.?0+$/, "");
       }
 
       function setMobileMenuOpen(isOpen) {
@@ -1015,11 +1177,21 @@
       }
 
       function getPreferredTheme() {
+        const themeFromUrl = getThemeFromUrl();
+        if (themeFromUrl) {
+          return themeFromUrl;
+        }
         const storedTheme = readStoredTheme();
         if (storedTheme) {
           return storedTheme;
         }
         return "light";
+      }
+
+      function getThemeFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const theme = params.get(THEME_QUERY_PARAM);
+        return theme === "dark" || theme === "light" ? theme : null;
       }
 
       function readStoredTheme() {
@@ -1629,8 +1801,15 @@
         }
 
         clearHoverState();
-        const defaultScale = window.matchMedia(`(min-width: ${LARGE_SCREEN_MIN_WIDTH}px)`).matches ? MAP_MIN_ZOOM : 1;
-        const targetTransform = getCenteredDefaultTransform(defaultScale, MAP_DEFAULT_PAN_X, 0);
+        const urlTransform = app.mapInteraction.initialTransformFromUrl;
+        const targetTransform = urlTransform
+          ? d3.zoomIdentity.translate(urlTransform.x, urlTransform.y).scale(urlTransform.k)
+          : getCenteredDefaultTransform(
+              window.matchMedia(`(min-width: ${LARGE_SCREEN_MIN_WIDTH}px)`).matches ? MAP_MIN_ZOOM : 1,
+              MAP_DEFAULT_PAN_X,
+              0
+            );
+        app.mapInteraction.initialTransformFromUrl = null;
         zoomSelection.call(zoomBehavior.transform, targetTransform);
         app.mapInteraction.currentTransform = targetTransform;
         app.suppressMapClickUntil = Date.now() + MAP_GESTURE_CLICK_SUPPRESS_MS;
